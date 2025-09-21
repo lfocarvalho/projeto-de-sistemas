@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Listagem de Lojas{% endblock %}
+{% block conteudo %}
+
+<div class="container mt-4">
+    <h2>Nossas Lojas Parceiras</h2>
+    <p>Encontre os melhores produtos e serviços para o seu pet.</p>
+
+    <form method="get" action="">
+        <div class="input-group mb-4">
+            <input type="text" name="q" class="form-control" placeholder="Pesquisar por nome ou endereço da loja..." value="{{ request.GET.q }}">
+            <button class="btn btn-primary" type="submit">Pesquisar</button>
+        </div>
+    </form>
+
+    <div class="row">
+        {% for loja in lista_lojas %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                {% if loja.foto %}
+                    <img src="{{ loja.foto.url }}" class="card-img-top" alt="Foto da {{ loja.nome }}" style="height: 250px; object-fit: cover;">
+                {% else %}
+                    <img src="https://via.placeholder.com/400x250.png?text=Foto+da+Loja" class="card-img-top" alt="Foto da {{ loja.nome }}">
+                {% endif %}
+
+                <div class="card-body">
+                    <h5 class="card-title">{{ loja.nome }}</h5>
+                    <p class="card-text">{{ loja.endereco }}</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Telefone:</strong> {{ loja.telefone }}</li>
+                    <li class="list-group-item"><strong>Funcionamento:</strong> {{ loja.horario_funcionamento }}</li>
+                </ul>
+                <div class="card-body">
+                    <a href="mailto:{{ loja.email }}" class="card-link">Enviar E-mail</a>
+                    <a href="{{ loja.website }}" class="card-link" target="_blank">Visitar Site</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col">
+            <div class="alert alert-warning" role="alert">
+                Nenhuma loja encontrada com os critérios de busca.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
