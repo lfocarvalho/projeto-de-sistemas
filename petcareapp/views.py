@@ -1,6 +1,6 @@
 from django.views.generic import View
 from django.shortcuts import redirect, render 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse   
 
 class Login(View):
@@ -17,5 +17,23 @@ class Login(View):
              if user.is_active:
                 login(request, user)
                 return redirect("/loja")
+             
         
         return render(request, 'autenticacao.html', {'mensagem': 'Login Falhou!'})
+    
+class Logout(View):
+
+    def get(self, request):
+        logout(request)
+        return redirect('/')
+    
+
+    def get(self, request):
+        logout(request)
+        return redirect('/')
+
+class Cadastro(View):
+
+    def get(self, request):
+        return render(request, 'cadastro.html', {})
+
