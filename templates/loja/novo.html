@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block titulo %} Cadastro de Novas Lojas {% endblock %}
+
+{% block conteudo %}
+
+
+<form action="/loja/novo/" method="post" enctype="multipart/form-data" class="container mt-4">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-6">
+        <label for="nome" class="form-label">Nome da Loja</label>
+        {{ form.nome }}
+    </div>
+    <div class="col-6">
+        <label for="endereco" class="form-label">Endereço</label>
+        {{ form.endereco }}
+    </div>
+    <div class="col-6">
+        <label for="telefone" class="form-label">Telefone</label>
+        {{ form.telefone }}
+    </div>
+    <div class="col-6">
+        <label for="horario_funcionamento" class="form-label">Horário de Funcionamento</label>
+        {{ form.horario_funcionamento }}
+    </div>
+    <div class="col-6">
+        <label for="email" class="form-label">E-mail</label>
+        {{ form.email }}
+    </div>
+    <div class="col-6">
+        <label for="website" class="form-label">Website</label>
+        {{ form.website }}
+    </div>
+    <div class="col-6">
+        <label for="foto" class="form-label">Foto</label>
+        {{ form.foto }}
+    </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Cadastrar</button>
+</form>
+{% endblock %}

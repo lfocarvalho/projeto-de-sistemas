@@ -79,13 +79,13 @@
                 <section class="menu-section">
                     <ul class="nav nav-pills justify-content-center">
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.app_name == 'loja' %}active{% endif %}" href="{% url 'loja:loja_list' %}">
-                                <i class="bi bi-shop"></i> Lojas e Vets
+                            <a class="nav-link active" href="/loja/">
+                                <i class="bi bi-list-ul"></i> Listar Pets e Vets
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.app_name == 'produto' %}active{% endif %}" href="{% url 'produto:produto_list' %}">
-                                <i class="bi bi-box-seam"></i> Produtos
+                            <a class="nav-link" href="/loja/novo">
+                                <i class="bi bi-plus-circle"></i> Cadastrar Lojas
                             </a>
                         </li>
                         <li class="nav-item">
@@ -94,7 +94,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="/loja/novo">
                                 <i class="bi bi-gear"></i> Configurações
                             </a>
                         </li>
