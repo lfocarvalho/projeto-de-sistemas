@@ -11,7 +11,7 @@ class Loja(models.Model):
     email = models.EmailField()
     website = models.URLField(blank=True)
     foto = models.ImageField(
-        upload_to='lojas_fotos/', 
+        upload_to='loja/fotos/', 
         blank=True, 
         null=True, 
         verbose_name="Foto da Loja"
