@@ -1,0 +1,242 @@
+:root {
+    --primary-color: #7b2ea8;
+    --secondary-color: #703896;
+    --accent-color: #ff7e5f;
+    --light-color: #f8f9fa;
+    --dark-color: #3a0f5e;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    padding-top: 70px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 1rem;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white !important;
+    font-size: 1.4rem;
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    margin: 0 2px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.navbar-nav .nav-link:hover, 
+.navbar-nav .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white !important;
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.5rem 1rem;
+}
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-info {
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.btn-logout {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+}
+
+.btn-logout:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+    color: white;
+}
+
+.main-container {
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 15px;
+}
+
+.welcome-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.welcome-title {
+    color: var(--secondary-color);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+}
+
+.welcome-subtitle {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    margin-bottom: 0;
+}
+
+.menu-section {
+    margin: 2rem 0;
+}
+
+.nav-pills {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    justify-content: center;
+}
+
+.nav-pills .nav-link {
+    border-radius: 8px;
+    margin: 0 8px;
+    transition: all 0.3s;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 180px;
+    justify-content: center;
+}
+
+.nav-pills .nav-link.active {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    box-shadow: 0 4px 8px rgba(75, 108, 183, 0.3);
+    color: white;
+}
+
+.nav-pills .nav-link:not(.active) {
+    color: var(--dark-color);
+    border: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+}
+
+.nav-pills .nav-link:not(.active):hover {
+    background-color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+.content-section {
+    margin: 2rem 0;
+    min-height: 400px;
+}
+
+.default-content {
+    background: white;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.default-icon {
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.footer {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: auto;
+}
+
+.footer p {
+    margin-bottom: 0.3rem;
+}
+
+@media (max-width: 992px) {
+    .nav-pills .nav-link {
+        min-width: 160px;
+        margin: 5px;
+    }
+    
+    .user-section {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 1rem;
+    }
+    
+    .user-info {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-pills {
+        flex-direction: column;
+    }
+    
+    .nav-pills .nav-link {
+        min-width: auto;
+        margin: 5px 0;
+    }
+    
+    .welcome-section {
+        padding: 1.5rem;
+    }
+    
+    .welcome-title {
+        font-size: 1.5rem;
+    }
+}

@@ -18,12 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic.base import RedirectView
 from petcareapp.views import Login, Logout, Cadastro
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', Login.as_view(), name='login'),
-    path('loja/', include('loja.urls'), name='loja'),
+    path('', RedirectView.as_view(url='/loja/', permanent=True), name='home'),
+    path('login/', Login.as_view(), name='login'),
+    path('loja/', include('loja.urls')),
+    path('produtos/', include('produto.urls')),
     path('cadastro/', Cadastro.as_view(), name='cadastro'),
 
     path('logout/', Logout.as_view(), name = 'logout')

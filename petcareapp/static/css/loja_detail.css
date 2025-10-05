@@ -1,0 +1,59 @@
+.loja-header {
+    position: relative;
+    height: 40vh;
+    min-height: 300px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    overflow: hidden;
+    color: white;
+    display: flex;
+    align-items: flex-end;
+    padding: 2rem;
+}
+
+.loja-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
+}
+
+.loja-header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.loja-header h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+}
+
+.filtros-card {
+    position: sticky;
+    top: 80px; /* Ajuste conforme a altura do seu navbar */
+}
+
+.produto-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.produto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.produto-img {
+    height: 200px;
+    object-fit: cover;
+}
+
+.preco {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+}

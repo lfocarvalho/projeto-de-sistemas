@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %} Cadastro de Produto {{ titulo }} - {{ block.super }}{% endblock %}
+
+{% block css_local %}
+<link href="{% static 'css/produto_form.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block conteudo %}
+<div class="card card-custom">
+    <div class="card-header-custom">
+        <h4 class="mb-0"><i class="bi bi-plus-circle"></i> {{ titulo }}</h4>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row g-3">
+                {% for field in form %}
+                <div class="col-md-6">
+                    {% if field.name == 'categoria' and user.is_superuser %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            <div class="input-group">
+                                {{ field }}
+                                <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#modalNovaCategoria">
+                                    <i class="bi bi-plus-lg"></i> Nova
+                                </button>
+                            </div>
+                        </div>
+                    {% else %}
+                        {% if field.name == 'disponivel' %}
+                            <div class="form-check mt-4 pt-3">
+                                {{ field }}
+                                <label class="form-check-label" for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                </label>
+                            </div>
+                        {% else %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <hr class="my-4">
+            <button type="submit" class="btn btn-custom-primary">Salvar Produto</button>
+            <a href="{% url 'produto:produto_list' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+{% if user.is_superuser and categoria_form %}
+<!-- Modal Nova Categoria -->
+<div class="modal fade" id="modalNovaCategoria" tabindex="-1" aria-labelledby="modalNovaCategoriaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalNovaCategoriaLabel">Adicionar Nova Categoria</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovaCategoria">
+                    {% csrf_token %}
+                    {% for field in categoria_form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control">
+                            <div id="error-{{ field.name }}" class="invalid-feedback"></div>
+                        </div>
+                    {% endfor %}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="btnSalvarCategoria">Salvar Categoria</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block javascript_local %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const btnSalvarCategoria = document.getElementById('btnSalvarCategoria');
+    if (btnSalvarCategoria) {
+        btnSalvarCategoria.addEventListener('click', function () {
+            const form = document.getElementById('formNovaCategoria');
+            const formData = new FormData(form);
+            
+            fetch("{% url 'produto:categoria_create_ajax' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const categoriaSelect = document.getElementById('id_categoria');
+                    const newOption = new Option(data.nome, data.id, true, true);
+                    categoriaSelect.add(newOption);
+                    
+                    // Fecha o modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalNovaCategoria'));
+                    modal.hide();
+                    form.reset(); // Limpa o formulário
+                } else {
+                    // Exibe erros de validação
+                    Object.keys(data.errors).forEach(key => {
+                        const errorDiv = document.getElementById(`error-${key}`);
+                        const input = document.getElementById(`id_${key}`);
+                        input.classList.add('is-invalid');
+                        errorDiv.textContent = data.errors[key];
+                        errorDiv.style.display = 'block';
+                    });
+                }
+            })
+            .catch(error => console.error('Erro:', error));
+        });
+    }
+});
+</script>
+{% endblock %}

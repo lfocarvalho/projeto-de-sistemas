@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}{{ titulo }} - {{ block.super }}{% endblock %}
+
+{% block css_local %}
+<style>
+    .card-custom {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+    }
+
+    .card-header-custom {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 0.65rem 1rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(123, 46, 168, 0.25);
+    }
+
+    .btn-custom-primary {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .btn-custom-primary:hover {
+        background: var(--dark-color);
+        border-color: var(--dark-color);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block menu_superior %}{% endblock %}
+
+{% block conteudo %}
+<div class="card card-custom">
+    <div class="card-header-custom">
+        <h4 class="mb-0"><i class="bi bi-plus-circle"></i> {{ titulo }}</h4>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row g-3">
+                {% for field in form %}
+                <div class="col-md-6">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field|add_class:'form-control' }}
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+            <hr class="my-4">
+            <button type="submit" class="btn btn-custom-primary">Salvar Produto</button>
+            <a href="{% url 'produto:produto_list' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+{% comment %} Filtro para adicionar classe CSS ao campo do formulário {% endcomment %}
+{% filter add_class %}
+    {% if field.field.widget.input_type == 'select' %}
+        form-select
+    {% else %}
+        form-control
+    {% endif %}
+{% endfilter %}
+
+{% endblock %}

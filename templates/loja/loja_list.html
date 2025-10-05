@@ -16,26 +16,27 @@
     <div class="row">
         {% for loja in lista_lojas %}
         <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card h-100">
-                {% if loja.foto %}
-                    <img src="{{ loja.foto.url }}" class="card-img-top" alt="Foto da {{ loja.nome }}" style="height: 250px; object-fit: cover;">
-                {% else %}
-                    <img src="https://via.placeholder.com/400x250.png?text=Foto+da+Loja" class="card-img-top" alt="Foto da {{ loja.nome }}">
-                {% endif %}
-
-                <div class="card-body">
-                    <h5 class="card-title">{{ loja.nome }}</h5>
-                    <p class="card-text">{{ loja.endereco }}</p>
+            <a href="{% url 'loja:loja_detail' pk=loja.pk %}" class="text-decoration-none text-dark">
+                <div class="card h-100 produto-card">
+                    {% if loja.foto %}
+                        <img src="{{ loja.foto.url }}" class="card-img-top" alt="Foto da {{ loja.nome }}" style="height: 250px; object-fit: cover;">
+                    {% else %}
+                        <img src="https://via.placeholder.com/400x250.png?text=Foto+da+Loja" class="card-img-top" alt="Foto da {{ loja.nome }}">
+                    {% endif %}
+    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ loja.nome }}</h5>
+                        <p class="card-text">{{ loja.endereco }}</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Telefone:</strong> {{ loja.telefone }}</li>
+                        <li class="list-group-item"><strong>Funcionamento:</strong> {{ loja.horario_funcionamento }}</li>
+                    </ul>
+                    <div class="card-body">
+                        <span class="card-link">Ver produtos e detalhes</span>
+                    </div>
                 </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><strong>Telefone:</strong> {{ loja.telefone }}</li>
-                    <li class="list-group-item"><strong>Funcionamento:</strong> {{ loja.horario_funcionamento }}</li>
-                </ul>
-                <div class="card-body">
-                    <a href="mailto:{{ loja.email }}" class="card-link">Enviar E-mail</a>
-                    <a href="{{ loja.website }}" class="card-link" target="_blank">Visitar Site</a>
-                </div>
-            </div>
+            </a>
         </div>
         {% empty %}
         <div class="col">
