@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 class Login(View):
 
     def get(self, request):
+        if request.user.is_authenticated:
+            return redirect('produto:produto_list')
         contexto = {}
         return render(request, 'autenticacao.html', contexto)     
     
@@ -17,7 +19,7 @@ class Login(View):
         if user is not None:
              if user.is_active:
                 login(request, user)
-                return redirect("/loja")
+                return redirect("produto:produto_list")
              
         
         return render(request, 'autenticacao.html', {'mensagem': 'Login Falhou!'})

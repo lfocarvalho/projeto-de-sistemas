@@ -33,7 +33,7 @@
                 <div class="card product-card h-100">
                     <a href="{% url 'loja:loja_detail' pk=loja.pk %}">
                         {% if loja.foto %}
-                            <img src="{{ loja.foto.url }}" class="card-img-top product-card-img" alt="Foto da {{ loja.nome }}">
+                            <img src="{{ MEDIA_URL }}{{ loja.foto }}" class="card-img-top product-card-img" alt="Foto da {{ loja.nome }}">
                         {% else %}
                             <div class="card-img-top product-card-img-placeholder d-flex align-items-center justify-content-center">
                                 <i class="bi bi-shop" style="font-size: 4rem; color: #ced4da;"></i>

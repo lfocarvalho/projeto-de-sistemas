@@ -15,7 +15,7 @@
         <!-- Coluna Esquerda: Detalhes do Produto Selecionado -->
         <div class="col-lg-7">
             {% if produto.foto %}
-                <img src="{{ produto.foto.url }}" class="produto-detail-img shadow-sm" alt="{{ produto.nome }}">
+                <img src="{{ MEDIA_URL }}{{ produto.foto }}" class="produto-detail-img shadow-sm" alt="{{ produto.nome }}">
             {% else %}
                 <div class="d-flex align-items-center justify-content-center shadow-sm" style="height: 400px; background-color: var(--bg-secondary); border-radius: 12px;">
                     <i class="bi bi-bag" style="font-size: 6rem; color: #ced4da;"></i>
@@ -48,10 +48,10 @@
             <div class="oferta-list mt-3">
                 <ul class="list-group">
                     {% for oferta in ofertas %}
-                    <a href="{% url 'produto:produto_detail' oferta.pk %}" class="list-group-item list-group-item-action {% if oferta.pk == produto.pk %}active{% endif %}">
+                    <a href="{% url 'produto:produto_detail' pk=oferta.pk %}" class="list-group-item list-group-item-action {% if oferta.pk == produto.pk %}active{% endif %}">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1">{{ oferta.loja.nome }}</h6>
-                            <strong style="color: var(--accent-color);">R$ {{ oferta.preco|floatformat:2 }}</strong>
+                            <strong style="color: var(--accent-color);" style="color: #134732 !important;">R$ {{ oferta.preco|floatformat:2 }}</strong>
                         </div>
                         <p class="mb-1 text-muted small">{{ oferta.loja.endereco }}</p>
                         <small>

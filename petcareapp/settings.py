@@ -65,6 +65,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'loja.context_processors.carousel_context', # Adiciona o contexto do carrossel
+                'django.template.context_processors.media', # Adiciona MEDIA_URL ao contexto
             ],
         },
     },

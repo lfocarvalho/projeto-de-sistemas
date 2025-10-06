@@ -1,3 +1,23 @@
+#paw-background-container {
+    position: fixed; /* Fixa o fundo na tela */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Ocupa 100% da largura da viewport */
+    height: 100vh; /* Ocupa 100% da altura da viewport */
+    pointer-events: none; /* Permite clicar através do fundo */
+    overflow: hidden; /* Garante que as patas não vazem para fora da tela */
+    z-index: -1; /* Coloca o fundo atrás de todo o conteúdo */
+    opacity: 0.1; /* Ajuste a opacidade geral do fundo se quiser as patas mais sutis */
+}
+
+.paw-stamp {
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    /* Para a colorização, o JS irá injetar SVG ou usar um filtro CSS */
+    /* Se a pata for SVG ou for colorida por JS, este será o estilo do elemento */
+    /* Se for feito com filter: invert() para PNG preta, então o filtro será aplicado aqui */
+}
 /* === VARIÁVEIS DE CORES MODO CLARO === */
 :root {
     --primary-1: #00A0A0;      /* Verde-Água Escuro */
@@ -17,7 +37,28 @@ body {
         linear-gradient(90deg, #F7F7F7 0%, #F7F7F7 50%, #00A0A0 85%, #007080 100%);
     background-repeat: no-repeat;
     background-attachment: fixed;
+    background-color: var(--bg-main); /* Cor de fundo sólida */
     position: relative;
+    overflow: hidden; /* Evita que elementos vazem */
+}
+
+/* Gradiente e estampa de fundo */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Coloca abaixo de tudo */
+    background: linear-gradient(90deg, rgba(247,247,247,1) 0%, rgba(247,247,247,1) 50%, var(--primary-1) 85%, var(--primary-2) 100%);
+    
+    /* Aplica a imagem como máscara */
+    mask-image: url('/static/img/1314467.png'), url('/static/img/1314467.png'), url('/static/img/1314467.png'), url('/static/img/1314467.png');
+    mask-size: 200px, 150px, 100px, 250px; /* Tamanhos variados */
+    mask-position: 10% 20%, 80% 90%, 30% 70%, 95% 10%; /* Posições variadas */
+    mask-repeat: repeat;
+    opacity: 0.15; /* Opacidade da estampa */
 }
 
 /* Imagem decorativa fixa no canto inferior esquerdo */
