@@ -1,42 +1,49 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block titulo %} Cadastro de Novas Lojas {% endblock %}
+{% block titulo %} {{ titulo }} - {{ block.super }} {% endblock %}
+
+{% block css_local %}
+<link href="{% static 'css/produto_form.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block conteudo %}
-
-
-<form action="/loja/novo/" method="post" enctype="multipart/form-data" class="container mt-4">
-    {% csrf_token %}
-    <div class="row">
-        <div class="col-6">
-        <label for="nome" class="form-label">Nome da Loja</label>
-        {{ form.nome }}
+<div class="card card-custom">
+    <div class="card-header-custom">
+        <h4 class="mb-0"><i class="bi bi-shop"></i> {{ titulo }}</h4>
     </div>
-    <div class="col-6">
-        <label for="endereco" class="form-label">Endereço</label>
-        {{ form.endereco }}
+    <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row g-3">
+                {% for field in form %}
+                <div class="col-md-6">
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                        <div class="form-check mt-4 pt-3">
+                            {{ field }}
+                            <label class="form-check-label" for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+                        </div>
+                    {% else %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <hr class="my-4">
+            <button type="submit" class="btn btn-custom-primary">Salvar</button>
+            <a href="{% url 'loja:loja_list' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
     </div>
-    <div class="col-6">
-        <label for="telefone" class="form-label">Telefone</label>
-        {{ form.telefone }}
-    </div>
-    <div class="col-6">
-        <label for="horario_funcionamento" class="form-label">Horário de Funcionamento</label>
-        {{ form.horario_funcionamento }}
-    </div>
-    <div class="col-6">
-        <label for="email" class="form-label">E-mail</label>
-        {{ form.email }}
-    </div>
-    <div class="col-6">
-        <label for="website" class="form-label">Website</label>
-        {{ form.website }}
-    </div>
-    <div class="col-6">
-        <label for="foto" class="form-label">Foto</label>
-        {{ form.foto }}
-    </div>
-    </div>
-    <button type="submit" class="btn btn-primary">Cadastrar</button>
-</form>
+</div>
 {% endblock %}

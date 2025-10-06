@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login PetCare</title>
     <link href="{% static 'bootstrap-5.3.8-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+<<<<<<< Updated upstream
     <script src="{% static 'bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js' %}"></script>
     <style>
         body {
@@ -104,47 +105,45 @@
             font-size: 0.9rem;
         }
     </style>
+=======
+    {% block css_local %}
+    <link href="{% static 'css/autenticacao.css' %}" rel="stylesheet">
+    {% endblock %}
+>>>>>>> Stashed changes
 </head>
 
 <body>
     <div class="login-container">
-        <div class="card login-card" style="width: 100%; max-width: 420px;">
-            <div class="card-header">
-                <div class="logo">
-                    <span class="logo-icon">🐾</span>
-                    <span>PetCare</span>
-                </div>
-                <p class="mb-0">Cuidando do seu melhor amigo</p>
+        <div class="form-container">
+            <div class="text-center mb-5">
+                <h1 class="logo-text"><i class="bi bi-heart-pulse" style="color: var(--accent-color);"></i> PetCare
+                </h1>
+                <p class="text-muted">Cuidando do seu melhor amigo</p>
             </div>
-            <div class="card-body">
-                <h3 class="card-title text-center mb-4" style="color: #343a40;">Bem-vindo de volta</h3>
-                <form action="/" method="post">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="usuario" class="form-label">Usuário</label>
-                        <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Digite seu usuário" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="senha" class="form-label">Senha</label>
-                        <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha" required>
-                    </div>
-                    {% if mensagem %}
-                    <div class="alert alert-danger d-flex align-items-center" role="alert">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16">
-                            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                        </svg>
-                        <div>{{ mensagem }}</div>
-                    </div>
-                    {% endif %}
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Entrar</button><br>
-                        <a class="btn btn-primary" href="{% url 'cadastro' %}" class="botao-redirecionamento">Cadastre-se</a>
-                    </div>
-                </form>
-                <div class="footer-text">
-                    © 2023 PetCare - Todos os direitos reservados
+            <h3 class="mb-4">Bem-vindo de volta</h3>
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="usuario" class="form-label">Usuário</label>
+                    <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Digite seu usuário"
+                        required>
                 </div>
-            </div>
+                <div class="mb-3">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha"
+                        required>
+                </div>
+                {% if mensagem %}
+                <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
+                    <div>{{ mensagem }}</div>
+                </div>
+                {% endif %}
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-custom-primary">Entrar</button>
+                    <a class="btn btn-secondary" href="{% url 'cadastro' %}">Criar uma conta</a>
+                </div>
+            </form>
         </div>
     </div>
 </body>

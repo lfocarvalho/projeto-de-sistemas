@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}{{ produto.nome }} - Comparar Preços - {{ block.super }}{% endblock %}
+
+{% block css_local %}
+<link href="{% static 'css/produto_form.css' %}" rel="stylesheet">
+
+{% endblock %}
+{% block carrossel %}
+{% endblock%}
+{% block conteudo %}
+<div class="container mt-5">
+    <div class="row g-5">
+        <!-- Coluna Esquerda: Detalhes do Produto Selecionado -->
+        <div class="col-lg-7">
+            {% if produto.foto %}
+                <img src="{{ produto.foto.url }}" class="produto-detail-img shadow-sm" alt="{{ produto.nome }}">
+            {% else %}
+                <div class="d-flex align-items-center justify-content-center shadow-sm" style="height: 400px; background-color: var(--bg-secondary); border-radius: 12px;">
+                    <i class="bi bi-bag" style="font-size: 6rem; color: #ced4da;"></i>
+                </div>
+            {% endif %}
+
+            <h1 class="mt-4">{{ produto.nome }}</h1>
+            <h5 style="color: #a0a0a0;">{{ produto.loja.nome }}</h5>
+            <a href="{% url 'loja:loja_detail' produto.loja.pk %}" class="btn btn-sm btn-link ps-0">
+                <i class="bi bi-arrow-left"></i> Voltar para a loja
+            </a>
+
+            <p class="lead preco mt-3" style="color: var(--accent-color);" >R$ {{ produto.preco|floatformat:2 }}</p>
+            
+            <hr class="my-4">
+
+            <h4>Descrição</h4>
+            <p>{{ produto.descricao|default:"Este produto não possui uma descrição detalhada." }}</p>
+
+            {% if user.is_superuser or user.email == produto.loja.email %}
+            <a href="{% url 'produto:produto_update' produto.pk %}" class="btn btn-secondary mt-3">
+                <i class="bi bi-pencil-square"></i> Editar Produto
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Coluna Direita: Lista de Lojas e Preços -->
+        <div class="col-lg-5">
+            <h4>Disponível em {{ ofertas.count }} loja(s)</h4>
+            <div class="oferta-list mt-3">
+                <ul class="list-group">
+                    {% for oferta in ofertas %}
+                    <a href="{% url 'produto:produto_detail' oferta.pk %}" class="list-group-item list-group-item-action {% if oferta.pk == produto.pk %}active{% endif %}">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ oferta.loja.nome }}</h6>
+                            <strong style="color: var(--accent-color);">R$ {{ oferta.preco|floatformat:2 }}</strong>
+                        </div>
+                        <p class="mb-1 text-muted small">{{ oferta.loja.endereco }}</p>
+                        <small>
+                            {% if oferta.estoque > 0 %}
+                                Estoque: {{ oferta.estoque }} un.
+                            {% else %}
+                                Estoque não informado
+                            {% endif %}
+                        </small>
+                    </a>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,11 +1,19 @@
-from django.forms import ModelForm
+from django import forms
 from loja.models import Loja
 
-class FormularioLoja(ModelForm):
+class FormularioLoja(forms.ModelForm):
     """
-    Formulário para o model Veículo
+    Formulário para o model Loja.
     """
 
     class Meta:
         model = Loja
-        exclude = []
+        fields = [
+            'nome', 'endereco', 'descricao', 'telefone', 
+            'horario_abertura', 'horario_fechamento', 'atendimento_emergencia',
+            'email', 'website', 'foto'
+        ]
+        widgets = {
+            'horario_abertura': forms.TimeInput(attrs={'type': 'time'}),
+            'horario_fechamento': forms.TimeInput(attrs={'type': 'time'}),
+        }
