@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
-from django.views.generic import ListView, CreateView, View
+from django.views.generic import ListView, CreateView, View, DetailView
 from django.urls import reverse_lazy
-<<<<<<< Updated upstream
-from loja.models import Loja
-=======
 from django.forms import Select, TextInput, Textarea, NumberInput, CheckboxInput, FileInput, EmailInput, TimeInput, URLInput
 from .models import Loja
 from produto.models import Produto, Categoria
 from produto.consts import ANIMAL_CHOICES, PORTE_CHOICES, IDADE_CHOICES
->>>>>>> Stashed changes
 from django.db.models import Q
 from django.http import FileResponse, Http404
 from django.core.exceptions import ObjectDoesNotExist
@@ -21,11 +17,8 @@ class ListarLojas(LoginRequiredMixin, ListView):
     View para listar lojas parceiras cadastradas.
     """
     model = Loja
-<<<<<<< Updated upstream
-=======
     template_name = 'loja/loja_list.html'
     login_url = reverse_lazy('login')
->>>>>>> Stashed changes
     context_object_name = 'lista_lojas'
     template_name = 'loja/loja_list.html'
 
@@ -64,11 +57,6 @@ class CriarLoja(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['titulo'] = 'Cadastrar Nova Loja'
         return context
-
-<<<<<<< Updated upstream
-=======
-
-
 
 class LojaDetailView(LoginRequiredMixin, DetailView):
     """
@@ -112,4 +100,3 @@ class LojaDetailView(LoginRequiredMixin, DetailView):
         context['porte_choices'] = PORTE_CHOICES
         context['idade_choices'] = IDADE_CHOICES
         return context
->>>>>>> Stashed changes
