@@ -17,39 +17,31 @@
             {% csrf_token %}
             <div class="row g-3">
                 {% for field in form %}
-                <div class="col-md-6">
-                    {% if field.name == 'categoria' and user.is_superuser %}
-                        <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                            <div class="input-group">
-                                {{ field }}
-                                <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#modalNovaCategoria">
-                                    <i class="bi bi-plus-lg"></i> Nova
-                                </button>
-                            </div>
-                        </div>
-                    {% else %}
-                        {% if field.name == 'disponivel' %}
+                    <div class="col-md-6 {% if field.is_hidden %}d-none{% endif %}">
+                        {% if field.field.widget.input_type == 'checkbox' %}
                             <div class="form-check mt-4 pt-3">
                                 {{ field }}
-                                <label class="form-check-label" for="{{ field.id_for_label }}">
-                                    {{ field.label }}
-                                </label>
+                                <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            </div>
+                        {% elif field.name == 'categoria' and user.is_superuser %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                <div class="input-group">
+                                    {{ field }}
+                                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#modalNovaCategoria">
+                                        <i class="bi bi-plus-lg"></i> Nova
+                                    </button>
+                                </div>
                             </div>
                         {% else %}
                             <div class="mb-3">
                                 <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                                 {{ field }}
-                                {% if field.help_text %}
-                                    <small class="form-text text-muted">{{ field.help_text }}</small>
-                                {% endif %}
-                                {% for error in field.errors %}
-                                    <div class="invalid-feedback d-block">{{ error }}</div>
-                                {% endfor %}
+                                {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text }}</small>{% endif %}
+                                {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
                             </div>
                         {% endif %}
-                    {% endif %}
-                </div>
+                    </div>
                 {% endfor %}
             </div>
             <hr class="my-4">

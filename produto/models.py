@@ -1,5 +1,5 @@
 from django.db import models
-from loja.models import Loja
+from loja.models import Loja, CarouselImage
 from .consts import ANIMAL_CHOICES, IDADE_CHOICES, PORTE_CHOICES
 
 

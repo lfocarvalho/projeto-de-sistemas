@@ -5,8 +5,8 @@ from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Min, Max, Count, Q
 
-from .models import Produto, Categoria
-from .forms import CategoriaForm, ProdutoForm
+from .models import Produto, Categoria, Loja
+from .forms import CategoriaForm, ProdutoForm, Categoria
 from .consts import ANIMAL_CHOICES
 
 class ProdutoListView(LoginRequiredMixin, ListView):
@@ -47,10 +47,12 @@ class ProdutoListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['categorias'] = Categoria.objects.all()
         context['animal_choices'] = ANIMAL_CHOICES
+        if self.request.user.is_authenticated:
+            context['is_store_user'] = Loja.objects.filter(email=self.request.user.email).exists()
         return context
 
 
-class ProdutoCreateView(LoginRequiredMixin, CreateView):
+class ProdutoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     """
     View para cadastrar um novo produto.
     """
@@ -60,6 +62,12 @@ class ProdutoCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('produto:produto_list')
     login_url = reverse_lazy('login')
 
+    def test_func(self):
+        """Permite acesso a superusuários ou usuários associados a uma loja."""
+        if self.request.user.is_superuser:
+            return True
+        return Loja.objects.filter(email=self.request.user.email).exists()
+
     def get_form(self, form_class=None):
         """
         Adiciona classes CSS aos campos do formulário para estilização com Bootstrap.
@@ -67,6 +75,11 @@ class ProdutoCreateView(LoginRequiredMixin, CreateView):
         form = super().get_form(form_class)
         for field_name, field in form.fields.items():
             widget = field.widget
+            # Oculta o campo 'loja' se o usuário não for superuser,
+            # pois será preenchido automaticamente.
+            if not self.request.user.is_superuser and field_name == 'loja':
+                field.widget = field.hidden_widget()
+                continue
             # Aplica a classe 'form-select' para campos de seleção (ForeignKey, Choices)
             if isinstance(widget, Select):
                 widget.attrs.update({'class': 'form-select'})
@@ -85,6 +98,16 @@ class ProdutoCreateView(LoginRequiredMixin, CreateView):
         if self.request.user.is_superuser:
             context['categoria_form'] = CategoriaForm()
         return context
+
+    def form_valid(self, form):
+        """
+        Associa a loja correta ao produto se o usuário não for superuser.
+        """
+        if not self.request.user.is_superuser:
+            # Busca a loja associada ao email do usuário logado
+            loja_usuario = Loja.objects.get(email=self.request.user.email)
+            form.instance.loja = loja_usuario
+        return super().form_valid(form)
 
 
 class ProdutoDetailView(LoginRequiredMixin, DetailView):
