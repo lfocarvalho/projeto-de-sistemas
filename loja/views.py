@@ -2,7 +2,7 @@
 from django.views.generic import ListView, CreateView, View, DetailView
 from django.urls import reverse_lazy
 from django.forms import Select, TextInput, Textarea, NumberInput, CheckboxInput, FileInput, EmailInput, TimeInput, URLInput
-from .models import Loja
+from .models import Loja, Avaliacao
 from produto.models import Produto, Categoria
 from produto.consts import ANIMAL_CHOICES, PORTE_CHOICES, IDADE_CHOICES
 from django.db.models import Q
@@ -10,7 +10,9 @@ from django.http import FileResponse, Http404
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.mixins import LoginRequiredMixin
 from loja.forms import FormularioLoja
-
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import AvaliacaoForm
+from django.contrib.auth.decorators import login_required
 
 class ListarLojas(LoginRequiredMixin, ListView):
     """
@@ -99,4 +101,32 @@ class LojaDetailView(LoginRequiredMixin, DetailView):
         context['animal_choices'] = ANIMAL_CHOICES
         context['porte_choices'] = PORTE_CHOICES
         context['idade_choices'] = IDADE_CHOICES
+
+        context['avaliacoes'] = loja.avaliacoes.select_related('usuario').order_by('-criado_em')
+        user = self.request.user
+        if user.is_authenticated:
+            context['ja_avaliou'] = loja.avaliacoes.filter(usuario=user).exists()
+        else:
+            context['ja_avaliou'] = False
+
         return context
+    
+    
+@login_required
+def avaliar_loja(request, loja_id):
+    loja = get_object_or_404(Loja, id=loja_id)
+
+    if request.method == 'POST':
+        nota = int(request.POST.get('nota', 0))
+        comentario = request.POST.get('comentario', '').strip()
+
+        Avaliacao.objects.update_or_create(
+            usuario=request.user,
+            loja=loja,
+            defaults={'nota': nota, 'comentario': comentario}
+        )
+
+        loja.atualizar_media()
+        return redirect('loja:loja_detail', pk=loja.id)
+
+    return redirect('loja:loja_detail', pk=loja.id)
