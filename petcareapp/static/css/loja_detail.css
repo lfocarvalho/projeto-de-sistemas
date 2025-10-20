@@ -88,25 +88,3 @@
         font-size: 1.2rem;
     }
 }
-.rating {
-    direction: rtl; /* inverte a ordem para clique intuitivo (5 à esquerda) */
-    display: inline-flex;
-    justify-content: center;
-}
-
-.rating input[type="radio"] {
-    display: none;
-}
-
-.rating label i {
-    transition: color 0.2s ease;
-}
-
-.rating label:hover ~ label i,
-.rating label:hover i {
-    color: gold;
-}
-
-.rating input[type="radio"]:checked ~ label i {
-    color: gold;
-}

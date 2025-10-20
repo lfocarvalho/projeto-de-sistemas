@@ -1,9 +1,5 @@
 from django.db import models
 from datetime import time
-from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator, MaxValueValidator
-
-
 
 
 class Loja(models.Model):
@@ -33,20 +29,10 @@ class Loja(models.Model):
         null=True, 
         verbose_name="Foto da Loja"
     )
-    avaliacao_media = models.FloatField(default=0)
-    favoritada_por = models.ManyToManyField(User, related_name='lojas_favoritadas', blank=True)
 
     def __str__(self):
         return self.nome
 
-    def atualizar_media(self):
-        avaliacoes = self.avaliacoes.all()
-        if avaliacoes.exists():
-            media = sum(a.nota for a in avaliacoes) / avaliacoes.count()
-            self.avaliacao_media = round(media, 1)
-        else:
-            self.avaliacao_media = 0
-        self.save()
 
 class CarouselImage(models.Model):
     """
@@ -64,34 +50,3 @@ class CarouselImage(models.Model):
 
     def __str__(self):
         return self.caption_title or f"Imagem {self.id}"
-
-
-class Avaliacao(models.Model):
-    loja = models.ForeignKey(Loja, on_delete=models.CASCADE, related_name='avaliacoes')
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    nota = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)]
-    )
-    comentario = models.TextField(blank=True)
-    criado_em = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('loja', 'usuario')  # Um usuário avalia cada loja só uma vez
-
-    def __str__(self):
-        return f"{self.loja.nome} - {self.nota}⭐"
-    
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.loja.atualizar_media()
-
-class LojaFavorita(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favoritos_lojas')
-    loja = models.ForeignKey('Loja', on_delete=models.CASCADE, related_name='favoritos_relacionados')
-    criado_em = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('usuario', 'loja')
-
-    def __str__(self):
-        return f"{self.usuario.username} ❤️ {self.loja.nome}"
