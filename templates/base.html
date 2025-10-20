@@ -145,6 +145,11 @@
                         </li>
                         {% endif %}
                         <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'mapa_view' %}active{% endif %}" href="#">
+                                <i class="bi bi-map"></i> Localizações
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link disabled" href="#">
                                 <i class="bi bi-calendar-event"></i> Agendamentos
                             </a>

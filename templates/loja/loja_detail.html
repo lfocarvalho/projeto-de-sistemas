@@ -42,6 +42,20 @@
 
         <!-- Coluna de Filtros -->
         <div class="col-lg-3">
+<!-- Botão de Favoritar Loja -->
+<div class="mb-3 text-center">
+    {% if user.is_authenticated %}
+   <button class="favoritar-btn" data-loja-id="{{ loja.id }}">
+    {% if loja.id in favoritas_usuario %}
+        <i class="bi bi-heart-fill text-danger fs-4"></i>
+    {% else %}
+        <i class="bi bi-heart text-danger fs-4"></i>
+    {% endif %}
+</button>
+{% endif %}
+<small id="favoritos-count-{{ loja.id }}">{{ loja.favoritada_por.count }} favoritos</small>
+</div>
+<!-- Filtros -->
             <div class="card filtros-card">
                 <div class="card-header">
                     <h5 class="mb-0"><i class="bi bi-funnel-fill"></i> Filtrar Produtos</h5>
@@ -238,4 +252,42 @@ function atualizarEstrelas(hoverIdx = null) {
     });
 }
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.favoritar-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const lojaId = this.dataset.lojaId;
+
+            const response = await fetch("{% url 'loja:favoritar-loja' 0 %}".replace('0', lojaId), {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Accept': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                console.error('Erro ao favoritar a loja');
+                return;
+            }
+
+            const data = await response.json();
+
+            const icon = this.querySelector('i');
+            const countEl = document.getElementById('favoritos-count-' + lojaId);
+
+            if (data.favoritado) {
+                icon.classList.remove('bi-heart');
+                icon.classList.add('bi-heart-fill');
+            } else {
+                icon.classList.remove('bi-heart-fill');
+                icon.classList.add('bi-heart');
+            }
+
+            countEl.textContent = `${data.total_favoritos} favoritos`;
+        });
+    });
+});
+</script>
+
 {% endblock %}

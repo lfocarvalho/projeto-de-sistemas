@@ -373,3 +373,9 @@ h1, h2, h3, h4, h5, h6,
 span {
     color: #1E1E1E !important;
 }
+
+/* Deixa o switch de filtro verde quando ativo */
+.form-check-input:checked {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}

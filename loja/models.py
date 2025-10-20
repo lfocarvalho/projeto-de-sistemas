@@ -34,6 +34,7 @@ class Loja(models.Model):
         verbose_name="Foto da Loja"
     )
     avaliacao_media = models.FloatField(default=0)
+    favoritada_por = models.ManyToManyField(User, related_name='lojas_favoritadas', blank=True)
 
     def __str__(self):
         return self.nome
@@ -84,3 +85,13 @@ class Avaliacao(models.Model):
         super().save(*args, **kwargs)
         self.loja.atualizar_media()
 
+class LojaFavorita(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favoritos_lojas')
+    loja = models.ForeignKey('Loja', on_delete=models.CASCADE, related_name='favoritos_relacionados')
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'loja')
+
+    def __str__(self):
+        return f"{self.usuario.username} ❤️ {self.loja.nome}"
