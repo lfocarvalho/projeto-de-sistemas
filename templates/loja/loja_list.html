@@ -16,16 +16,30 @@
     <div class="card-body p-4 border-bottom">
         <form method="get" action="">
             <div class="row g-3 align-items-end">
-                <div class="col-md-10">
+                <div class="col-md-8">
                     <label for="q" class="form-label">Buscar por nome ou endereço</label>
-                    <input type="text" name="q" id="q" class="form-control" placeholder="Nome da loja ou endereço..." value="{{ request.GET.q|default:'' }}">
+                    <input type="text" name="q" id="q" class="form-control" placeholder="Nome da loja ou endereço..."
+                        value="{{ request.GET.q|default:'' }}">
                 </div>
+                <div class="col-md-2 d-flex align-items-center mt-4">
+    {% if user.is_authenticated %}
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="1" id="favoritas" name="favoritas"
+               {% if request.GET.favoritas == "1" %}checked{% endif %}>
+        <label class="form-check-label" for="favoritas">
+            Somente minhas favoritas
+        </label>
+    </div>
+    {% endif %}
+</div>
+
                 <div class="col-md-2 d-grid">
                     <button type="submit" class="btn btn-custom-primary">Filtrar</button>
                 </div>
             </div>
         </form>
     </div>
+
     <div class="card-body p-4">
         <div class="row">
             {% for loja in lista_lojas %}
@@ -33,17 +47,20 @@
                 <div class="card product-card h-100">
                     <a href="{% url 'loja:loja_detail' pk=loja.pk %}">
                         {% if loja.foto %}
-                            <img src="{{ MEDIA_URL }}{{ loja.foto }}" class="card-img-top product-card-img" alt="Foto da {{ loja.nome }}">
+                        <img src="{{ MEDIA_URL }}{{ loja.foto }}" class="card-img-top product-card-img"
+                            alt="Foto da {{ loja.nome }}">
                         {% else %}
-                            <div class="card-img-top product-card-img-placeholder d-flex align-items-center justify-content-center">
-                                <i class="bi bi-shop" style="font-size: 4rem; color: #ced4da;"></i>
-                            </div>
+                        <div
+                            class="card-img-top product-card-img-placeholder d-flex align-items-center justify-content-center">
+                            <i class="bi bi-shop" style="font-size: 4rem; color: #ced4da;"></i>
+                        </div>
                         {% endif %}
                     </a>
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ loja.nome }}</h5>
                         <p class="card-text text-muted small flex-grow-1">{{ loja.endereco }}</p>
-                        <a href="{% url 'loja:loja_detail' pk=loja.pk %}" class="btn btn-custom-primary w-100 mt-auto" style="color: #ffffff;">Ver Loja</a>
+                        <a href="{% url 'loja:loja_detail' pk=loja.pk %}" class="btn btn-custom-primary w-100 mt-auto"
+                            style="color: #ffffff;">Ver Loja</a>
                     </div>
                 </div>
             </div>
@@ -55,5 +72,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
