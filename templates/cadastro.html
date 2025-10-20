@@ -1,35 +1,48 @@
-{% block conteudo %}
-<div class="login-container">
-    <h1 class="card-title text-center mb-4" style="color: #343a40;">Cadastro de Usuário</h1>
-    <div id="principal" class="login-container">
-        <form action="/" method="post">
-            <div>
-                <label for="usuario">Nome de Usuário:</label>
-                <input type="text" id="usuario" name="usuario" required>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - PetCare</title>
+    <link href="{% static 'bootstrap-5.3.8-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/autenticacao.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <div class="form-container">
+            <div class="text-center mb-5">
+                <h1 class="logo-text"><i class="bi bi-heart-pulse" style="color: var(--secondary);"></i> PetCare</h1>
+                <p class="text-muted">Cuidando do seu melhor amigo</p>
             </div>
-
-            <div>
-                <label for="nome">Nome:</label>
-                <input type="text" id="nome" name="nome" required>
+            <h3 class="mb-4">Crie sua conta</h3>
+            <form method="post" action="{% url 'cadastro' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="usuario" class="form-label">Nome de Usuário</label>
+                    <input type="text" class="form-control" id="usuario" name="usuario" required placeholder="ex: joaosilva">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-mail</label>
+                    <input type="email" class="form-control" id="email" name="email" required placeholder="ex: joao.silva@email.com">
+                </div>
+                <div class="mb-3">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senha" name="senha" required>
+                </div>
+                <div class="mb-3">
+                    <label for="senha2" class="form-label">Confirmar Senha</label>
+                    <input type="password" class="form-control" id="senha2" name="senha2" required>
+                </div>
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-custom-primary">Cadastrar</button>
+                    <a class="btn btn-secondary" href="{% url 'login' %}">Voltar para o Login</a>
+                </div>
+            </form>
+            <div class="footer-text mt-4 text-center">
+                © 2023 PetCare - Todos os direitos reservados
             </div>
-            
-            <div>
-                <label for="email">E-mail:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            
-            <div>
-                <label for="senha">Senha:</label>
-                <input type="passwor1d" id="senha" name="senha" required>
-            </div>
-            <div>
-                <label for="senha2">Confirmar Senha:</label>
-                <input type="password" id="senha2" name="senha2" required>
-            </div>
-
-            <button type="submit">Cadastrar</button>
-
-        </form>
+        </div>
     </div>
-</div>
-{% endblock %}
+</body>
+</html>

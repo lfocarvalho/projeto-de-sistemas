@@ -1,0 +1,112 @@
+.loja-header {
+    position: relative;
+    border-radius: 12px;
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.loja-header.no-image {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.loja-header-content {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 22%;
+    min-height: 80px;
+    background: linear-gradient(0deg, rgba(247,247,247,0.98) 35%, rgba(0,160,160,0.10) 100%, rgba(0,160,160,0.00) 100%);
+    color: #1E1E1E;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.5rem 2rem 1.2rem 2rem;
+    box-sizing: border-box;
+}
+
+.loja-header-content h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    color: #00FFB3;
+    text-shadow: 0 2px 12px #0008; 
+    opacity: 0.9;   
+}
+
+.loja-header-content p.lead {
+    font-size: 1.1rem;
+    margin-bottom: 0.2rem;
+    color: #fff;
+    opacity: 0.92;
+}
+
+.loja-header-content .badge {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    margin-top: 0.2rem;
+    background: #00A0A0;
+    color: #fff;
+    border-radius: 6px;
+    padding: 0.4em 0.8em;
+    box-shadow: 0 2px 8px rgba(201, 201, 201, 0.2);
+}
+
+.loja-header-content .badge.bg-danger {
+    background: #d9534f;
+    color: #fff;
+}
+
+.filtros-card {
+    position: sticky;
+    top: 100px; /* Ajuste conforme a altura do seu navbar */
+}
+
+.filtros-card .card-header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.produto-img {
+    height: 200px;
+    object-fit: cover;
+}
+
+@media (max-width: 768px) {
+    .loja-header {
+        height: 220px;
+    }
+    .loja-header-content {
+        padding: 1rem 1rem 0.8rem 1rem;
+        height: 28%;
+        min-height: 60px;
+    }
+    .loja-header-content h1 {
+        font-size: 1.2rem;
+    }
+}
+.rating {
+    direction: rtl; /* inverte a ordem para clique intuitivo (5 à esquerda) */
+    display: inline-flex;
+    justify-content: center;
+}
+
+.rating input[type="radio"] {
+    display: none;
+}
+
+.rating label i {
+    transition: color 0.2s ease;
+}
+
+.rating label:hover ~ label i,
+.rating label:hover i {
+    color: gold;
+}
+
+.rating input[type="radio"]:checked ~ label i {
+    color: gold;
+}

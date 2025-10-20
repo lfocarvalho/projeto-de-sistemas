@@ -1,0 +1,293 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}{{ loja.nome }} - {{ block.super }}{% endblock %}
+
+{% block css_local %}
+<link href="{% static 'css/loja_detail.css' %}" rel="stylesheet">
+{% endblock %}
+{% block menu_superior %}
+    <section class="menu-section">
+    </section>
+{% endblock %}
+{% block carrossel %}
+{% endblock%}
+{% block conteudo %}
+<div class="container-fluid">
+    <!-- Cabeçalho da Loja -->
+    {% if loja.foto %}
+    <div class="loja-header mb-5" style="background-image: url('{{ loja.foto.url }}');">
+    {% else %}
+    <div class="loja-header mb-5 no-image">
+    {% endif %}
+        <div class="loja-header-content">
+            <h1>{{ loja.nome }}</h1>
+            <p class="lead"><i class="bi bi-geo-alt-fill"></i> {{ loja.endereco }}</p>
+            <div>
+                <span class="badge bg-light text-dark"><i class="bi bi-clock"></i> {{ loja.horario_abertura|time:"H:i" }} - {{ loja.horario_fechamento|time:"H:i" }}</span>
+                {% if loja.atendimento_emergencia %}
+                <span class="badge bg-danger"><i class="bi bi-heart-pulse-fill"></i> Emergência 24h</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-9">
+            <p>{{ loja.descricao|default:"Esta loja ainda não forneceu uma descrição." }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <!-- Coluna de Filtros -->
+        <div class="col-lg-3">
+<!-- Botão de Favoritar Loja -->
+<div class="mb-3 text-center">
+    {% if user.is_authenticated %}
+   <button class="favoritar-btn" data-loja-id="{{ loja.id }}">
+    {% if loja.id in favoritas_usuario %}
+        <i class="bi bi-heart-fill text-danger fs-4"></i>
+    {% else %}
+        <i class="bi bi-heart text-danger fs-4"></i>
+    {% endif %}
+</button>
+{% endif %}
+<small id="favoritos-count-{{ loja.id }}">{{ loja.favoritada_por.count }} favoritos</small>
+</div>
+<!-- Filtros -->
+            <div class="card filtros-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-funnel-fill"></i> Filtrar Produtos</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="">
+                        <div class="mb-3">
+                            <label for="q" class="form-label">Nome do Produto</label>
+                            <input type="text" name="q" id="q" class="form-control" value="{{ request.GET.q }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoria" class="form-label">Categoria</label>
+                            <select name="categoria" id="categoria" class="form-select">
+                                <option value="">Todas</option>
+                                {% for cat in categorias %}
+                                <option value="{{ cat.id }}" {% if request.GET.categoria == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="animal" class="form-label">Animal</label>
+                            <select name="animal" id="animal" class="form-select">
+                                <option value="">Todos</option>
+                                {% for val, name in animal_choices %}
+                                <option value="{{ val }}" {% if request.GET.animal == val %}selected{% endif %}>{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-custom-primary">Aplicar Filtros</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna de Produtos -->
+        <div class="col-lg-9">
+            <div class="row">
+                {% for produto in produtos %}
+                <div class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+                    <div class="card h-100 produto-card shadow-sm w-100">
+                        {% if produto.foto %}
+                            <img src="{{ produto.foto.url }}" class="card-img-top produto-img" alt="{{ produto.nome }}">
+                        {% else %}
+                            <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #2a2a2a;">
+                                <i class="bi bi-bag" style="font-size: 3rem; color: #ced4da;"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ produto.nome }}</h5>
+                            <p class="card-text text-muted small">{{ produto.categoria.nome|default:"Sem categoria" }}</p>
+                            <p class="card-text flex-grow-1">{{ produto.descricao|truncatewords:15 }}</p>
+                            <div class="mt-auto">
+                                <p class="preco mb-2">R$ {{ produto.preco|floatformat:2 }}</p>
+                                <a href="{% url 'produto:produto_detail' produto.pk %}" class="btn btn-custom-primary w-100">Ver Detalhes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col">
+                    <div class="alert alert-info">
+                        Nenhum produto encontrado para esta loja ou com os filtros aplicados.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+ <!-- ⭐ Avaliação média e formulário -->
+<div class="mt-4 text-center">
+    <!-- Média atual -->
+    <div class="mb-2">
+        {% for i in "12345" %}
+            {% if forloop.counter <= loja.avaliacao_media %}
+                <i class="bi bi-star-fill text-warning"></i>
+            {% elif forloop.counter|add:"-1" < loja.avaliacao_media %}
+                <i class="bi bi-star-half text-warning"></i>
+            {% else %}
+                <i class="bi bi-star text-warning"></i>
+            {% endif %}
+        {% endfor %}
+        <small class="text-muted ms-2">{{ loja.avaliacao_media|floatformat:1 }}/5</small>
+    </div>
+
+    <!-- Formulário para avaliar -->
+{% if user.is_authenticated %}
+    {% if ja_avaliou %}
+        <div class="alert alert-info text-center">
+            Você já avaliou esta loja. Obrigado pelo seu feedback! ⭐
+        </div>
+    {% else %}
+        <form method="post" action="{% url 'loja:avaliar-loja' loja.id %}" id="avaliacao-form">
+            {% csrf_token %}
+
+            <!-- Estrelas -->
+            <div class="rating mb-2">
+                {% for i in "54321" %}
+                    <input type="radio" id="star{{ i }}" name="nota" value="{{ i }}" class="d-none">
+                    <label for="star{{ i }}" class="star-label" style="cursor:pointer; font-size:2rem; color:#ccc;">
+                        <i class="bi bi-star-fill"></i>
+                    </label>
+                {% endfor %}
+            </div>
+
+            <!-- Caixa de comentário -->
+            <div class="mb-2">
+                <textarea name="comentario" class="form-control" placeholder="Deixe um comentário (opcional)" rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-custom-primary btn-sm">Enviar Avaliação</button>
+        </form>
+    {% endif %}
+{% else %}
+    <div class="alert alert-warning">
+        Faça <a href="{% url 'login' %}">login</a> para avaliar esta loja.
+    </div>
+{% endif %}
+
+
+<!-- ⭐ Avaliações dos usuários -->
+<div class="mt-5">
+    <h4 class="mb-3 text-center">Avaliações de Clientes</h4>
+    {% if avaliacoes %}
+        {% for avaliacao in avaliacoes %}
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h6 class="mb-1">
+                        <strong>{{ avaliacao.usuario.username }}</strong>
+                    </h6>
+                    <small class="text-muted">{{ avaliacao.criado_em|date:"d/m/Y H:i" }}</small>
+                </div>
+                <div class="mb-1">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= avaliacao.nota %}
+                            <i class="bi bi-star-fill text-warning"></i>
+                        {% else %}
+                            <i class="bi bi-star text-warning"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% if avaliacao.comentario %}
+                    <p class="mb-0">{{ avaliacao.comentario }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-secondary text-center">
+            Nenhuma avaliação ainda. Seja o primeiro a avaliar!
+        </div>
+    {% endif %}
+</div>
+<script>
+const estrelas = document.querySelectorAll('.rating label');
+const inputs = document.querySelectorAll('.rating input');
+
+estrelas.forEach((label, idx) => {
+    label.addEventListener('click', () => {
+        // Marca o input correspondente
+        const input = document.getElementById(label.htmlFor);
+        input.checked = true;
+
+        // Atualiza visual das estrelas
+        atualizarEstrelas();
+    });
+
+    label.addEventListener('mouseover', () => {
+        atualizarEstrelas(idx);
+    });
+
+    label.addEventListener('mouseout', () => {
+        atualizarEstrelas(); // volta para o estado marcado
+    });
+});
+
+function atualizarEstrelas(hoverIdx = null) {
+    const checkedIdx = Array.from(inputs).findIndex(i => i.checked);
+
+    estrelas.forEach((label, idx) => {
+        const iElem = label.querySelector('i');
+        let fill = false;
+
+        if (hoverIdx !== null) {
+            fill = idx >= hoverIdx; // RTL: idx maior ou igual ao hover
+        } else if (checkedIdx !== -1) {
+            fill = idx >= checkedIdx; // RTL: idx maior ou igual ao selecionado
+        }
+
+        iElem.style.color = fill ? 'gold' : '#ccc';
+    });
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.favoritar-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const lojaId = this.dataset.lojaId;
+
+            const response = await fetch("{% url 'loja:favoritar-loja' 0 %}".replace('0', lojaId), {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Accept': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                console.error('Erro ao favoritar a loja');
+                return;
+            }
+
+            const data = await response.json();
+
+            const icon = this.querySelector('i');
+            const countEl = document.getElementById('favoritos-count-' + lojaId);
+
+            if (data.favoritado) {
+                icon.classList.remove('bi-heart');
+                icon.classList.add('bi-heart-fill');
+            } else {
+                icon.classList.remove('bi-heart-fill');
+                icon.classList.add('bi-heart');
+            }
+
+            countEl.textContent = `${data.total_favoritos} favoritos`;
+        });
+    });
+});
+</script>
+
+{% endblock %}

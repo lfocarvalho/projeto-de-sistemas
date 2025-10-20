@@ -1,0 +1,194 @@
+#paw-background-container {
+    position: fixed; /* Fixa o fundo na tela */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Ocupa 100% da largura da viewport */
+    height: 100vh; /* Ocupa 100% da altura da viewport */
+    pointer-events: none; /* Permite clicar através do fundo */
+    overflow: hidden; /* Garante que as patas não vazem para fora da tela */
+    z-index: -1; /* Coloca o fundo atrás de todo o conteúdo */
+    opacity: 0.1; /* Ajuste a opacidade geral do fundo se quiser as patas mais sutis */
+}
+
+.paw-stamp {
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    /* Para a colorização, o JS irá injetar SVG ou usar um filtro CSS */
+    /* Se a pata for SVG ou for colorida por JS, este será o estilo do elemento */
+    /* Se for feito com filter: invert() para PNG preta, então o filtro será aplicado aqui */
+}
+/* === VARIÁVEIS DE CORES MODO CLARO === */
+:root {
+    --primary-1: #00A0A0;      /* Verde-Água Escuro */
+    --primary-2: #007080;      /* Azul Ciano Profundo */
+    --secondary: #00FFB3;      /* Verde Limão Brilhante */
+    --bg-main: #F7F7F7;        /* Fundo Principal */
+    --bg-secondary: #EFEFEF;   /* Fundo Secundário */
+    --text-color: #1E1E1E;     /* Texto Principal */
+}
+
+/* === FUNDO E TIPOGRAFIA === */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    color: var(--text-color);
+    background:
+        linear-gradient(90deg, #F7F7F7 0%, #F7F7F7 50%, #00A0A0 85%, #007080 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-color: var(--bg-main); /* Cor de fundo sólida */
+    position: relative;
+    overflow: hidden; /* Evita que elementos vazem */
+}
+
+/* Gradiente e estampa de fundo */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Coloca abaixo de tudo */
+    background: linear-gradient(90deg, rgba(247,247,247,1) 0%, rgba(247,247,247,1) 50%, var(--primary-1) 85%, var(--primary-2) 100%);
+    
+    /* Aplica a imagem como máscara */
+    mask-image: url('/static/img/1314467.png'), url('/static/img/1314467.png'), url('/static/img/1314467.png'), url('/static/img/1314467.png');
+    mask-size: 200px, 150px, 100px, 250px; /* Tamanhos variados */
+    mask-position: 10% 20%, 80% 90%, 30% 70%, 95% 10%; /* Posições variadas */
+    mask-repeat: repeat;
+    opacity: 0.15; /* Opacidade da estampa */
+}
+
+/* Imagem decorativa fixa no canto inferior esquerdo */
+body::before {
+    content: "";
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 32vw;
+    max-width: 100000px;
+    height: auto;
+    aspect-ratio: 1/1;
+    min-height: 120px;
+    max-height: 60vh;
+    background: url('/static/img/Vector.png') left bottom no-repeat;
+    background-size: contain;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.95;
+}
+
+/* Garante que o conteúdo fique acima da imagem decorativa */
+.login-container,
+.form-container {
+    position: relative;
+    z-index: 1;
+}
+
+/* === CONTAINER DE LOGIN === */
+.login-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10%;
+}
+
+/* === FORMULÁRIO === */
+.form-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 2.5rem;
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 160, 160, 0.08);
+    box-shadow: 0 10px 30px rgba(0, 160, 160, 0.08);
+}
+
+.logo-text {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-1);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #4a4a4a;
+}
+
+input.form-control {
+    background: #fff;
+    color: var(--text-color);
+    border: 1px solid #cfd8dc;
+    border-radius: 6px;
+}
+
+input.form-control:focus {
+    border-color: var(--primary-2);
+    box-shadow: 0 0 0 2px var(--secondary);
+    background: #fff;
+    color: var(--text-color);
+}
+
+/* === BOTÕES === */
+.btn-custom-primary {
+    background: linear-gradient(90deg, var(--primary-1) 60%, var(--primary-2) 100%);
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.btn-custom-primary:hover, .btn-custom-primary:focus {
+    background: linear-gradient(90deg, var(--primary-2) 60%, var(--primary-1) 100%);
+    color: #fff;
+}
+
+.btn-secondary {
+    background: #fff;
+    color: var(--primary-2);
+    border: 1.5px solid var(--primary-2);
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-secondary:hover, .btn-secondary:focus {
+    background: var(--primary-2);
+    color: #fff;
+}
+
+/* === ALERTAS === */
+.alert {
+    border-radius: 8px;
+    background: #fff;
+    color: var(--primary-2);
+    border-left: 5px solid var(--secondary);
+    border-top: none;
+    border-bottom: none;
+    border-right: none;
+}
+
+/* === ÍCONES DE DESTAQUE === */
+.bi-heart-pulse,
+.bi-exclamation-triangle-fill {
+    color: var(--secondary) !important;
+}
+
+/* === RESPONSIVIDADE === */
+@media (max-width: 992px) {
+    body {
+        background-size: 80%;
+    }
+    .login-container {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .form-container {
+        margin: 2rem;
+    }
+}
