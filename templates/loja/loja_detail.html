@@ -39,6 +39,7 @@
     </div>
 
     <div class="row">
+
         <!-- Coluna de Filtros -->
         <div class="col-lg-3">
             <div class="card filtros-card">
@@ -112,4 +113,129 @@
         </div>
     </div>
 </div>
+ <!-- ⭐ Avaliação média e formulário -->
+<div class="mt-4 text-center">
+    <!-- Média atual -->
+    <div class="mb-2">
+        {% for i in "12345" %}
+            {% if forloop.counter <= loja.avaliacao_media %}
+                <i class="bi bi-star-fill text-warning"></i>
+            {% elif forloop.counter|add:"-1" < loja.avaliacao_media %}
+                <i class="bi bi-star-half text-warning"></i>
+            {% else %}
+                <i class="bi bi-star text-warning"></i>
+            {% endif %}
+        {% endfor %}
+        <small class="text-muted ms-2">{{ loja.avaliacao_media|floatformat:1 }}/5</small>
+    </div>
+
+    <!-- Formulário para avaliar -->
+{% if user.is_authenticated %}
+    {% if ja_avaliou %}
+        <div class="alert alert-info text-center">
+            Você já avaliou esta loja. Obrigado pelo seu feedback! ⭐
+        </div>
+    {% else %}
+        <form method="post" action="{% url 'loja:avaliar-loja' loja.id %}" id="avaliacao-form">
+            {% csrf_token %}
+
+            <!-- Estrelas -->
+            <div class="rating mb-2">
+                {% for i in "54321" %}
+                    <input type="radio" id="star{{ i }}" name="nota" value="{{ i }}" class="d-none">
+                    <label for="star{{ i }}" class="star-label" style="cursor:pointer; font-size:2rem; color:#ccc;">
+                        <i class="bi bi-star-fill"></i>
+                    </label>
+                {% endfor %}
+            </div>
+
+            <!-- Caixa de comentário -->
+            <div class="mb-2">
+                <textarea name="comentario" class="form-control" placeholder="Deixe um comentário (opcional)" rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-custom-primary btn-sm">Enviar Avaliação</button>
+        </form>
+    {% endif %}
+{% else %}
+    <div class="alert alert-warning">
+        Faça <a href="{% url 'login' %}">login</a> para avaliar esta loja.
+    </div>
+{% endif %}
+
+
+<!-- ⭐ Avaliações dos usuários -->
+<div class="mt-5">
+    <h4 class="mb-3 text-center">Avaliações de Clientes</h4>
+    {% if avaliacoes %}
+        {% for avaliacao in avaliacoes %}
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h6 class="mb-1">
+                        <strong>{{ avaliacao.usuario.username }}</strong>
+                    </h6>
+                    <small class="text-muted">{{ avaliacao.criado_em|date:"d/m/Y H:i" }}</small>
+                </div>
+                <div class="mb-1">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= avaliacao.nota %}
+                            <i class="bi bi-star-fill text-warning"></i>
+                        {% else %}
+                            <i class="bi bi-star text-warning"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% if avaliacao.comentario %}
+                    <p class="mb-0">{{ avaliacao.comentario }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-secondary text-center">
+            Nenhuma avaliação ainda. Seja o primeiro a avaliar!
+        </div>
+    {% endif %}
+</div>
+<script>
+const estrelas = document.querySelectorAll('.rating label');
+const inputs = document.querySelectorAll('.rating input');
+
+estrelas.forEach((label, idx) => {
+    label.addEventListener('click', () => {
+        // Marca o input correspondente
+        const input = document.getElementById(label.htmlFor);
+        input.checked = true;
+
+        // Atualiza visual das estrelas
+        atualizarEstrelas();
+    });
+
+    label.addEventListener('mouseover', () => {
+        atualizarEstrelas(idx);
+    });
+
+    label.addEventListener('mouseout', () => {
+        atualizarEstrelas(); // volta para o estado marcado
+    });
+});
+
+function atualizarEstrelas(hoverIdx = null) {
+    const checkedIdx = Array.from(inputs).findIndex(i => i.checked);
+
+    estrelas.forEach((label, idx) => {
+        const iElem = label.querySelector('i');
+        let fill = false;
+
+        if (hoverIdx !== null) {
+            fill = idx >= hoverIdx; // RTL: idx maior ou igual ao hover
+        } else if (checkedIdx !== -1) {
+            fill = idx >= checkedIdx; // RTL: idx maior ou igual ao selecionado
+        }
+
+        iElem.style.color = fill ? 'gold' : '#ccc';
+    });
+}
+</script>
 {% endblock %}
