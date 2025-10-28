@@ -34,6 +34,8 @@ class Loja(models.Model):
         verbose_name="Foto da Loja"
     )
     avaliacao_media = models.FloatField(default=0)
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
     favoritada_por = models.ManyToManyField(User, related_name='lojas_favoritadas', blank=True)
 
     def __str__(self):

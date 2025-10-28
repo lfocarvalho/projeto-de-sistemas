@@ -164,3 +164,29 @@ def favoritar_loja(request, loja_id):
 
     total_favoritos = loja.favoritada_por.count()
     return JsonResponse({'favoritado': favoritado, 'total_favoritos': total_favoritos})
+
+
+@login_required
+def mapa_lojas_view(request):
+    """
+    View para exibir o mapa com a localização das lojas.
+    """
+    return render(request, 'loja/mapa_lojas.html')
+
+@login_required
+def perfil_usuario(request):
+    """
+    Exibe a página de perfil do usuário com suas informações e atividades.
+    """
+    user = request.user
+    lojas_favoritas = user.lojas_favoritadas.all().order_by('nome')
+    avaliacoes_usuario = Avaliacao.objects.filter(usuario=user).select_related('loja').order_by('-criado_em')
+
+    context = {
+        'lojas_favoritas': lojas_favoritas,
+        'avaliacoes': avaliacoes_usuario,
+        'total_favoritos': lojas_favoritas.count(),
+        'total_avaliacoes': avaliacoes_usuario.count(),
+        'titulo': 'Meu Perfil',
+    }
+    return render(request, 'loja/perfil_usuario.html', context)

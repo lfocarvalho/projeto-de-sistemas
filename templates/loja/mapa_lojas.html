@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Localizar Lojas - {{ block.super }}{% endblock %}
+
+{% block css_local %}
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #mapid {
+            height: 600px; /* Altura do mapa */
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .map-container {
+            padding: 20px;
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+        }
+    </style>
+{% endblock %}
+
+{% block conteudo %}
+<div class="container mt-4">
+    <div class="map-container">
+        <h2 class="mb-4 text-center"><i class="bi bi-geo-alt-fill"></i> Nossas Lojas no Mapa</h2>
+        <div id="mapid"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript_local %}
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mapContainer = document.getElementById('mapid');
+            // Só inicializa o mapa se o elemento existir
+            if (!mapContainer) {
+                console.error("Elemento do mapa #mapid não encontrado.");
+                return;
+            }
+
+            // Inicializa o mapa
+            // Usamos 'mapContainer' em vez de 'mapid' para ser mais explícito
+            // Coordenadas de exemplo (centro do Brasil ou uma região comum)
+            var mymap = L.map('mapid').setView([-15.7801, -47.9292], 4); // Brasília como centro, zoom 4
+            var userMarker;
+
+            // Adiciona a camada de tiles (o mapa de fundo) do OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(mymap);
+
+            // Função para obter a localização do usuário
+            function obterLocalizacaoUsuario() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            const lat = position.coords.latitude;
+                            const lon = position.coords.longitude;
+                            
+                            console.log(`Localização do usuário: ${lat}, ${lon}`);
+                            mymap.setView([lat, lon], 13); // Centraliza o mapa no usuário com zoom 13
+
+                            // Adiciona um marcador para a localização do usuário
+                            if (userMarker) mymap.removeLayer(userMarker);
+                            userMarker = L.marker([lat, lon]).addTo(mymap)
+                                .bindPopup('<b>Você está aqui!</b>').openPopup();
+
+                            adicionarMarcadoresLojas(lat, lon);
+                        },
+                        function() {
+                            // Se o usuário negar, carrega todas as lojas
+                            console.log("Permissão de localização negada. Carregando todas as lojas.");
+                            adicionarMarcadoresLojas();
+                        }
+                    );
+                } else {
+                    // Se o navegador não suportar, carrega todas as lojas
+                    console.log("Geolocalização não é suportada por este navegador.");
+                    adicionarMarcadoresLojas();
+                }
+            }
+
+            // Função para adicionar marcadores das lojas
+            function adicionarMarcadoresLojas(userLat = null, userLon = null) {
+                let apiUrl = '{% url "loja:api-listar-lojas" %}';
+                if (userLat && userLon) {
+                    apiUrl += `?lat=${userLat}&lon=${userLon}`;
+                }
+
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(lojas => {
+                        console.log("Lojas recebidas da API:", lojas); // Log para depuração
+                        if (lojas && lojas.length > 0) {
+                            let bounds = [];
+                            lojas.forEach(loja => {
+                                if (loja.latitude && loja.longitude) {
+                                    var marker = L.marker([loja.latitude, loja.longitude]).addTo(mymap);
+                                    let popupContent = `<b>${loja.nome}</b><br>${loja.endereco}`;
+                                    if (loja.distancia !== null) {
+                                        popupContent += `<br><i>Aprox. ${loja.distancia} km de você</i>`;
+                                    }
+                                    popupContent += `<br><a href="/loja/${loja.id}/">Ver Detalhes</a>`;
+                                    marker.bindPopup(popupContent);
+                                    bounds.push([loja.latitude, loja.longitude]);
+                                }
+                            });
+                            // Ajusta o mapa para mostrar todos os marcadores
+                            if (bounds.length > 0) {
+                                // Se houver apenas um marcador, centralize nele com um zoom mais próximo.
+                                console.log("Adicionando marcadores ao mapa...");
+                                // Se a localização do usuário não foi usada, ajusta o mapa para mostrar todas as lojas
+                                if (!userLat) {
+                                    if (bounds.length === 1) {
+                                        mymap.setView(bounds[0], 15); // Zoom nível 15
+                                    } else {
+                                        mymap.fitBounds(bounds, { padding: [50, 50] }); // Adiciona um preenchimento
+                                    }
+                                }
+                            }
+                        } else {
+                            console.log("Nenhuma loja com coordenadas válidas foi encontrada na API.");
+                            // Adiciona uma mensagem amigável se nenhuma loja for encontrada
+                            mapContainer.innerHTML = '<div class="alert alert-warning text-center">Nenhuma loja com localização cadastrada foi encontrada.</div>';
+                            mapContainer.style.height = 'auto';
+                            console.log("Nenhuma loja com coordenadas encontradas.");
+                        }
+                    })
+                    .catch(error => console.error('Erro ao buscar dados das lojas:', error));
+            }
+
+            obterLocalizacaoUsuario();
+
+            // Força o mapa a se redimensionar corretamente.
+            // Isso resolve problemas de renderização quando o mapa está em um container que muda de tamanho.
+            // Usar requestAnimationFrame é mais eficiente que setTimeout para tarefas de renderização.
+            requestAnimationFrame(function() {
+                setTimeout(function() {
+                    mymap.invalidateSize(true);
+                }, 100); // Um pequeno delay para garantir que tudo carregou
+            });
+
+        });
+    </script>
+{% endblock %}
