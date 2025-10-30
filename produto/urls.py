@@ -1,7 +1,11 @@
 from django.urls import path
-from .views import ProdutoListView, ProdutoCreateView, CategoriaCreateAjaxView, ProdutoDetailView, ProdutoUpdateView
-
-# Adiciona um namespace para o app 'produto'
+from .views import (
+    ProdutoListView,
+    ProdutoCreateView,
+    ProdutoDetailView,
+    ProdutoUpdateView,
+    CategoriaCreateAjaxView,
+)
 
 app_name = 'produto'
 

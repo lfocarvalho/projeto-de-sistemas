@@ -33,6 +33,8 @@ class Loja(models.Model):
         null=True, 
         verbose_name="Foto da Loja"
     )
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="Latitude")
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="Longitude")
     avaliacao_media = models.FloatField(default=0)
     favoritada_por = models.ManyToManyField(User, related_name='lojas_favoritadas', blank=True)
 
