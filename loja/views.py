@@ -90,7 +90,6 @@ class CriarLoja(LoginRequiredMixin, CreateView):
     model = Loja
     form_class = FormularioLoja
     template_name = 'loja/novo.html'
-    success_url = reverse_lazy('loja:loja_list')
 
     def get_form(self, form_class=None):
         """
@@ -111,6 +110,12 @@ class CriarLoja(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['titulo'] = 'Cadastrar Nova Loja'
         return context
+
+    def get_success_url(self):
+        """
+        Redireciona para a página de detalhes da loja recém-criada.
+        """
+        return reverse_lazy('loja:loja_detail', kwargs={'pk': self.object.pk})
 
 class LojaDetailView(LoginRequiredMixin, DetailView):
     """
