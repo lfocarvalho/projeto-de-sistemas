@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .api_views import listar_lojas_api
+from .api import SalvarLocalizacaoLojaView, api_listar_lojas
 
 app_name = 'loja'
 
@@ -14,5 +14,6 @@ urlpatterns = [
     path('perfil/', views.perfil_usuario, name='perfil_usuario'),
 
     # Rota da API
-    path('api/lojas/', listar_lojas_api, name='api-listar-lojas'),
+    path('api/lojas/', api_listar_lojas, name='api-listar-lojas'),
+    path('api/loja/<int:loja_id>/salvar-localizacao/', SalvarLocalizacaoLojaView.as_view(), name='api-salvar-localizacao'),
 ]

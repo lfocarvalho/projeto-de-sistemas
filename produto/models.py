@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from loja.models import Loja, CarouselImage
 from .consts import ANIMAL_CHOICES, IDADE_CHOICES, PORTE_CHOICES
 
@@ -44,9 +45,37 @@ class Produto(models.Model):
         verbose_name="Foto do Produto"
     )
 
+    # Interações
+    curtido_por = models.ManyToManyField(User, related_name='produtos_curtidos', blank=True)
+    avaliacao_media = models.FloatField(default=0)
+
+    def atualizar_media(self):
+        avaliacoes = self.avaliacoes.all()
+        if avaliacoes.exists():
+            media = sum(a.nota for a in avaliacoes) / avaliacoes.count()
+            self.avaliacao_media = round(media, 1)
+        else:
+            self.avaliacao_media = 0
+        self.save(update_fields=['avaliacao_media'])
+
     def __str__(self):
         return self.nome
 
     class Meta:
         verbose_name = "Produto"
         verbose_name_plural = "Produtos"
+
+
+class AvaliacaoProduto(models.Model):
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE, related_name='avaliacoes')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='avaliacoes_produto')
+    nota = models.PositiveSmallIntegerField(choices=[(i, i) for i in range(1, 6)])
+    comentario = models.TextField(blank=True, null=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('produto', 'usuario')
+        ordering = ['-criado_em']
+
+    def __str__(self):
+        return f"{self.usuario} - {self.produto} ({self.nota})"
