@@ -53,6 +53,7 @@
 
 {% block javascript_local %}
     <!-- Leaflet JS -->
+    {{ loja_para_editar|json_script:"loja-para-editar-data" }}
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
@@ -74,6 +75,17 @@
             // Coordenadas de exemplo (Brasília como centro, ou outra coordenada inicial)
             var mymap = L.map('mapid').setView([-15.7801, -47.9292], DEFAULT_ZOOM);
             var userMarker;
+
+            // Verifica se estamos no modo de edição
+            let lojaParaEditar = null;
+            const lojaParaEditarDataElem = document.getElementById('loja-para-editar-data');
+            if (lojaParaEditarDataElem) {
+                const content = lojaParaEditarDataElem.textContent;
+                if (content && content.trim() !== 'null') {
+                    lojaParaEditar = JSON.parse(content);
+                }
+            }
+            const isEditMode = lojaParaEditar !== null;
 
             // Variáveis globais para os marcadores das lojas e mensagens de controle
             var storeMarkers = L.layerGroup().addTo(mymap); // Grupo para os marcadores das lojas
@@ -98,10 +110,87 @@
                 mapMessageControl._div.innerHTML = '';
             }
 
+            // --- Definição dos Ícones Coloridos ---
+            var blueIcon = new L.Icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            var redIcon = new L.Icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            var userIcon = new L.Icon({ // Ícone para a localização do usuário
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
             // Adiciona a camada de tiles (o mapa de fundo) do OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(mymap);
+
+            // Função para salvar a localização da loja (modo de edição)
+            function salvarLocalizacao(lat, lon) {
+                if (!isEditMode) return;
+                displayMapMessage('Salvando...', 'info'); // Feedback para o usuário
+
+                // Gera a URL dinamicamente para evitar erros de rota
+                const urlTemplate = "{% url 'loja:api-salvar-localizacao' 0 %}";
+                const url = urlTemplate.replace('0', lojaParaEditar.id);
+                const csrfToken = '{{ csrf_token }}'; // Corrigido para usar a tag de template
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ lat: lat, lon: lon })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayMapMessage(`Localização da loja <strong>${lojaParaEditar.nome}</strong> atualizada com sucesso! <a href="{% url 'loja:loja_detail' 0 %}".replace('0', lojaParaEditar.id) class="alert-link">Ver detalhes</a>.`, 'success');
+                    } else {
+                        const errorMsg = data.message || 'Falha ao salvar a localização.';
+                        displayMapMessage(errorMsg, 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao salvar localização:', error);
+                    displayMapMessage('Erro ao salvar a localização.', 'danger');
+                });
+            }
+
+            // Botão de Salvar Personalizado (para modo de edição)
+            var SaveButton = L.Control.extend({
+                options: { position: 'topright' },
+                onAdd: function (map) {
+                    var container = L.DomUtil.create('div', 'leaflet-control leaflet-control-custom');
+                    container.innerHTML = '<button id="save-location-btn" type="button" class="btn btn-success" title="Salvar nova localização"><i class="bi bi-check-circle-fill"></i> Salvar</button>';
+                    L.DomEvent.disableClickPropagation(container);
+                    // O evento de clique será adicionado dinamicamente
+                    return container;
+                },
+                onRemove: function(map) {
+                    // Limpeza se necessário
+                }
+            });
+            var saveButtonControl = new SaveButton();
 
             // Função para obter a localização do usuário
             function obterLocalizacaoUsuario() {
@@ -114,7 +203,7 @@
                             console.log(`Localização do usuário obtida: ${lat}, ${lon}`);
                             mymap.setView([lat, lon], USER_LOCATION_ZOOM);
                             if (userMarker) mymap.removeLayer(userMarker);
-                            userMarker = L.marker([lat, lon]).addTo(mymap)
+                            userMarker = L.marker([lat, lon], { icon: userIcon }).addTo(mymap)
                                 .bindPopup('<b>Você está aqui!</b>')
                                 .openPopup();
                             adicionarMarcadoresLojas(lat, lon);
@@ -141,7 +230,7 @@
                 storeMarkers.clearLayers(); // Limpa marcadores antigos
                 clearMapMessage();
 
-                let apiUrl = '{% url "loja:api-listar-lojas" %}';
+                let apiUrl = "{% url 'loja:api-listar-lojas' %}";
                 if (userLat && userLon) {
                     apiUrl += `?lat=${userLat}&lon=${userLon}`;
                 }
@@ -159,7 +248,10 @@
                             let bounds = [];
                             lojas.forEach(loja => {
                                 if (loja.latitude && loja.longitude) {
-                                    var marker = L.marker([loja.latitude, loja.longitude]);
+                                    // Escolhe o ícone baseado no atendimento de emergência
+                                    var icon = loja.atendimento_emergencia ? redIcon : blueIcon;
+
+                                    var marker = L.marker([loja.latitude, loja.longitude], { icon: icon });
                                     let popupContent = `<b>${loja.nome}</b><br>${loja.endereco}`;
                                     if (loja.distancia !== null) {
                                         popupContent += `<br><i>Aprox. ${loja.distancia} km de você</i>`;
@@ -195,7 +287,7 @@
                 options: { position: 'topleft' },
                 onAdd: function (map) {
                     var container = L.DomUtil.create('div', 'leaflet-control leaflet-control-custom');
-                    container.innerHTML = '<button type="button" class="btn btn-light btn-sm" title="Localizar minha posição"><i class="bi bi-geo-alt-fill"></i></button>';
+                    container.innerHTML = '<button type="button" class="btn btn-light" title="Localizar minha posição"><i class="bi bi-geo-alt-fill"></i></button>';
                     L.DomEvent.disableClickPropagation(container);
                     L.DomEvent.on(container, 'click', function() {
                         obterLocalizacaoUsuario();
@@ -205,10 +297,65 @@
             });
             mymap.addControl(new LocateButton());
 
-            // Carrega a localização inicial
-            obterLocalizacaoUsuario();
+            // Lógica de inicialização do mapa
+            if (isEditMode && lojaParaEditar) {
+                // MODO DE EDIÇÃO
+                displayMapMessage(`<strong>Modo de Edição:</strong> Clique ou arraste o marcador para definir a nova localização de <strong>${lojaParaEditar.nome}</strong>.`, 'primary');
+                
+                let editMarker;
+                let newPosition = null;
 
-            requestAnimationFrame(function() {
+                // Centraliza na loja se já tiver localização, senão no Brasil
+                if (lojaParaEditar.latitude && lojaParaEditar.longitude) {
+                    const initialPos = [lojaParaEditar.latitude, lojaParaEditar.longitude];
+                    mymap.setView(initialPos, SINGLE_STORE_ZOOM);
+                    editMarker = L.marker(initialPos, { draggable: true }).addTo(mymap);
+                } else {
+                    mymap.setView([-15.7801, -47.9292], DEFAULT_ZOOM);
+                }
+
+                // Adiciona o botão de salvar ao mapa
+                mymap.addControl(saveButtonControl);
+                const saveBtn = document.getElementById('save-location-btn');
+                saveBtn.disabled = true; // Desabilitado até uma nova posição ser definida
+
+                // Evento de clique no botão salvar
+                L.DomEvent.on(saveBtn, 'click', function() {
+                    if (newPosition) {
+                        salvarLocalizacao(newPosition.lat, newPosition.lng);
+                        saveBtn.disabled = true; // Desabilita após salvar
+                    }
+                });
+
+                const updateMarkerPosition = (latlng) => {
+                    newPosition = latlng;
+                    if (!editMarker) {
+                        editMarker = L.marker(latlng, { draggable: true }).addTo(mymap);
+                        editMarker.on('dragend', (e) => updateMarkerPosition(e.target.getLatLng()));
+                    } else {
+                        editMarker.setLatLng(latlng);
+                    }
+                    mymap.panTo(latlng);
+                    saveBtn.disabled = false; // Habilita o botão de salvar
+                    displayMapMessage(`Nova posição selecionada. Clique em "Salvar Localização".`, 'info');
+                };
+
+                mymap.on('click', function(e) {
+                    updateMarkerPosition(e.latlng);
+                });
+
+                if (editMarker) {
+                    editMarker.on('dragend', function(e) {
+                        updateMarkerPosition(e.target.getLatLng());
+                    });
+                }
+
+            } else {
+                // MODO DE VISUALIZAÇÃO PADRÃO
+                obterLocalizacaoUsuario();
+            }
+
+            requestAnimationFrame(function() { // Garante que o mapa renderize corretamente
                 mymap.invalidateSize(true);
             });
 

@@ -1,19 +1,23 @@
 # -*- coding: utf-8 -*-
 from django.views.generic import ListView, CreateView, View, DetailView
+import json
 from django.urls import reverse_lazy
 from django.forms import Select, TextInput, Textarea, NumberInput, CheckboxInput, FileInput, EmailInput, TimeInput, URLInput
 from .models import Loja, Avaliacao, LojaFavorita
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from produto.models import Produto, Categoria
-from produto.consts import ANIMAL_CHOICES, PORTE_CHOICES, IDADE_CHOICES
+from produto.consts import ANIMAL_CHOICES, IDADE_CHOICES, PORTE_CHOICES
 from django.db.models import Q
 from django.http import FileResponse, Http404
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.mixins import LoginRequiredMixin
 from loja.forms import FormularioLoja
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import AvaliacaoForm
+from .forms import AvaliacaoForm, FormularioLoja
+from django.db.models.functions import Radians, Sin, Cos, Sqrt, ATan2
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.db.models import Avg
 
 
 class ListarLojas(LoginRequiredMixin, ListView):
@@ -26,17 +30,51 @@ class ListarLojas(LoginRequiredMixin, ListView):
     context_object_name = 'lista_lojas'
 
     def get_queryset(self):
-        queryset = super().get_queryset().order_by('nome')
+        # Anotar a média de avaliação diretamente na queryset
+        queryset = Loja.objects.annotate(
+            avg_avaliacao=Avg('avaliacoes__nota')
+        )
+
+        # Filtros
         query = self.request.GET.get('q')
+        favoritas = self.request.GET.get('favoritas')
+
         if query:
             queryset = queryset.filter(Q(nome__icontains=query) | Q(endereco__icontains=query))
-        
-        favoritas = self.request.GET.get('favoritas')
-        if favoritas:
+        if favoritas and self.request.user.is_authenticated:
             queryset = queryset.filter(favoritada_por=self.request.user)
-        
+
+        # Ordenação
+        ordenar_por = self.request.GET.get('ordenar', 'nome')
+        lat = self.request.GET.get('lat')
+        lon = self.request.GET.get('lon')
+
+        if ordenar_por == 'proximidade' and lat and lon:
+            try:
+                user_lat = Radians(float(lat))
+                user_lon = Radians(float(lon))
+
+                # Fórmula de Haversine para calcular distância
+                queryset = queryset.annotate(
+                    dlat=Radians('latitude') - user_lat,
+                    dlon=Radians('longitude') - user_lon
+                ).annotate(
+                    a=Sin('dlat' / 2)**2 + Cos(user_lat) * Cos(Radians('latitude')) * Sin('dlon' / 2)**2
+                ).annotate(
+                    c=2 * ATan2(Sqrt('a'), Sqrt(1 - 'a'))  # Raio da Terra em km
+                ).annotate(
+                    distancia=6371 * 'c'  # Raio da Terra em km
+                ).order_by('distancia')
+            except (ValueError, TypeError):
+                # Se lat/lon forem inválidos, ordena por nome
+                queryset = queryset.order_by('nome')
+        elif ordenar_por == 'avaliacao':
+            queryset = queryset.order_by('-avaliacao_media', 'nome')
+        else: # Padrão é ordenar por nome
+            queryset = queryset.order_by('nome')
+
         return queryset
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
@@ -47,8 +85,6 @@ class ListarLojas(LoginRequiredMixin, ListView):
         else:
             context['favoritas_usuario'] = []
         return context
-
-
 
 class CriarLoja(LoginRequiredMixin, CreateView):
     model = Loja
@@ -114,9 +150,7 @@ class LojaDetailView(LoginRequiredMixin, DetailView):
         # Adiciona os produtos filtrados e as opções de filtro ao contexto
         context['produtos'] = produtos.distinct()
         context['categorias'] = Categoria.objects.all()
-        context['animal_choices'] = ANIMAL_CHOICES
-        context['porte_choices'] = PORTE_CHOICES
-        context['idade_choices'] = IDADE_CHOICES
+        context['animal_choices'] = ANIMAL_CHOICES # Usado nos filtros
 
         context['avaliacoes'] = loja.avaliacoes.select_related('usuario').order_by('-criado_em')
         user = self.request.user
@@ -126,9 +160,15 @@ class LojaDetailView(LoginRequiredMixin, DetailView):
             context['ja_avaliou'] = False
 
         if user.is_authenticated:
-            context['favoritada'] = LojaFavorita.objects.filter(loja=loja, usuario=user).exists()
+            context['favoritada'] = loja.favoritada_por.filter(id=user.id).exists()
+            # Adiciona os IDs dos produtos curtidos pelo usuário para esta página
+            produtos_curtidos_ids = user.produtos_curtidos.values_list('id', flat=True)
+            produtos_na_pagina_ids = [p.id for p in context['produtos']]
+            context['curtidos_usuario'] = list(set(produtos_curtidos_ids) & set(produtos_na_pagina_ids))
+            context['is_store_user'] = Loja.objects.filter(email=user.email).exists()
         else:
             context['favoritada'] = False
+            context['is_store_user'] = False
 
         return context
     
@@ -170,8 +210,23 @@ def favoritar_loja(request, loja_id):
 def mapa_lojas_view(request):
     """
     View para exibir o mapa com a localização das lojas.
+    Pode receber um `edit_loja_id` para entrar em modo de edição.
     """
-    return render(request, 'loja/mapa_lojas.html')
+    context = {}
+    edit_loja_id = request.GET.get('edit_loja_id')
+    if request.user.is_superuser and edit_loja_id:
+        try:
+            loja = Loja.objects.get(pk=edit_loja_id)
+            # Converte o objeto Loja em um dicionário serializável para JSON
+            context['loja_para_editar'] = {
+                'id': loja.id,
+                'nome': loja.nome,
+                'latitude': loja.latitude,
+                'longitude': loja.longitude,
+            }
+        except Loja.DoesNotExist:
+            context['loja_para_editar'] = None
+    return render(request, 'loja/mapa_lojas.html', context)
 
 @login_required
 def perfil_usuario(request):
