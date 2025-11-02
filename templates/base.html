@@ -23,10 +23,9 @@
 </head>
  <div id="paw-background-container"></div>
 <body class="{% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'cadastro' %}login-page{% endif %}">
-    <!-- Navbar Principal -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="{% url 'produto:produto_list' %}">
                 <i class="bi bi-heart-pulse"></i> PetCare
             </a>
             
@@ -61,6 +60,15 @@
                 
                 <div class="user-section">
                     {% if user.is_authenticated %}
+                        
+                        {% if is_store_user %}
+                        <div class="user-info">
+                            <a href="{% url 'painel_lojista:dashboard_home' %}" class="text-white text-decoration-none fw-bold">
+                                <i class="bi bi-clipboard-data-fill"></i>
+                                <span>Meu Painel</span>
+                            </a>
+                        </div>
+                        {% endif %}
                         <div class="user-info">
                             <a href="{% url 'loja:perfil_usuario' %}" class="text-white text-decoration-none">
                                 <i class="bi bi-person-circle"></i>
@@ -77,10 +85,8 @@
         </div>
     </nav>
 
-    <!-- Conteúdo Principal -->
     <main class="main-container">
-        <!-- Menu Superior -->
-         {% block carrossel %}
+        {% block carrossel %}
                          {% if carousel_images %}
                 <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-indicators">
@@ -160,10 +166,8 @@
             {% endblock %}
         </div>
 
-        <!-- Área de Conteúdo Dinâmico -->
         <section id="conteudo" class="content-section">
             {% block conteudo %}
-                <!-- Conteúdo padrão quando não há bloco específico -->
                 <div class="default-content">
                     <i class="bi bi-heart-pulse default-icon"></i>
                     <h3>Sistema de Gerenciamento PetCare</h3>
@@ -173,7 +177,6 @@
         </section>
     </main>
 
-    <!-- Rodapé -->
     <footer class="footer">
         <div class="container">
             <p>© 2023 PetCare - Todos os direitos reservados</p>

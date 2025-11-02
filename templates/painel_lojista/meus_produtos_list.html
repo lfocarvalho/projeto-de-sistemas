@@ -1,0 +1,96 @@
+{% extends 'painel_lojista/dashboard_base.html' %}
+{% load static %}
+
+{% block dashboard_conteudo %}
+
+<div class="d-flex justify-content-end mb-3">
+    <a href="{% url 'produto:produto_create' %}" class="btn btn-custom-primary">
+        <i class="bi bi-plus-circle"></i> Cadastrar Novo Produto
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Produto</th>
+                        {% if request.user.is_superuser %}
+                            <th scope="col">Loja</th>
+                        {% endif %}
+                        <th scope="col">Categoria</th>
+                        <th scope="col">Preço</th>
+                        <th scope="col">Estoque</th>
+                        <th scope="col">Disponível</th>
+                        <th scope="col">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produto in produtos %}
+                    <tr>
+                        <td>
+                            {% if produto.foto %}
+                                <img src="{{ produto.foto.url }}" alt="{{ produto.nome }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 10px;">
+                            {% else %}
+                                <i class="bi bi-bag" style="font-size: 24px; margin-right: 10px; color: #ccc;"></i>
+                            {% endif %}
+                            <strong>{{ produto.nome }}</strong>
+                        </td>
+                        {% if request.user.is_superuser %}
+                            <td><small>{{ produto.loja.nome }}</small></td>
+                        {% endif %}
+                        <td>{{ produto.categoria.nome|default:"N/A" }}</td>
+                        <td>R$ {{ produto.preco|floatformat:2 }}</td>
+                        <td>{{ produto.estoque }}</td>
+                        <td>
+                            {% if produto.disponivel %}
+                                <span class="badge bg-success">Sim</span>
+                            {% else %}
+                                <span class="badge bg-danger">Não</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'produto:produto_detail' pk=produto.pk %}" class="btn btn-sm btn-outline-info" title="Ver no site">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'produto:produto_update' pk=produto.pk %}" class="btn btn-sm btn-outline-warning" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'produto:produto_delete' pk=produto.pk %}" class="btn btn-sm btn-outline-danger" title="Excluir">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="{% if request.user.is_superuser %}7{% else %}6{% endif %}" class="text-center text-muted p-4">
+                            Nenhum produto cadastrado ainda.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if is_paginated %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+                {% endif %}
+
+                <li class="page-item disabled"><a class="page-link" href="#">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</a></li>
+
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'loja',
     'produto',
+    'painel_lojista',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +67,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'loja.context_processors.carousel_context', # Adiciona o contexto do carrossel
                 'django.template.context_processors.media', # Adiciona MEDIA_URL ao contexto
+                'loja.context_processors.loja_context',
             ],
         },
     },
