@@ -1,9 +1,11 @@
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, DetailView, UpdateView, View
+# DeleteView foi adicionado aqui
+from django.views.generic import ListView, CreateView, DetailView, UpdateView, View, DeleteView
 from django.forms import Select, TextInput, Textarea, NumberInput, CheckboxInput, FileInput
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, AccessMixin
 from django.db.models import Min, Max, Count, Q, Avg
+from .forms import ProdutoForm
 
 from .models import Produto, Categoria, Loja, AvaliacaoProduto
 from .forms import CategoriaForm, ProdutoForm, Categoria
@@ -49,6 +51,10 @@ class ProdutoListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['categorias'] = Categoria.objects.all()
         context['animal_choices'] = ANIMAL_CHOICES
+        
+        # ADICIONADO: Passa a informação se o usuário é admin
+        context['is_admin'] = self.request.user.is_authenticated and self.request.user.is_superuser
+        
         if self.request.user.is_authenticated:
             # Pega os IDs dos produtos que o usuário já curtiu
             produtos_curtidos_ids = self.request.user.produtos_curtidos.values_list('id', flat=True)
@@ -152,6 +158,10 @@ class ProdutoDetailView(LoginRequiredMixin, DetailView):
         produto = self.get_object()
         ofertas = Produto.objects.filter(nome__iexact=produto.nome, disponivel=True).order_by('preco')
         context['ofertas'] = ofertas
+        
+        # ADICIONADO: Passa a informação se o usuário é admin
+        context['is_admin'] = self.request.user.is_authenticated and self.request.user.is_superuser
+        
         # Avaliações
         context['avaliacoes'] = produto.avaliacoes.select_related('usuario').all()
         if self.request.user.is_authenticated:
@@ -252,3 +262,30 @@ class CategoriaCreateAjaxView(LoginRequiredMixin, UserPassesTestMixin, View):
         # Coleta os erros de validação para retornar no JSON
         errors = {field: error[0] for field, error in form.errors.items()}
         return JsonResponse({'success': False, 'errors': errors}, status=400)
+
+
+
+class AdminRequiredMixin(UserPassesTestMixin):
+    """
+    Garante que o usuário logado é um superusuário.
+    """
+    def test_func(self):
+        return self.request.user.is_superuser
+
+class ProdutoDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+    """
+    View para um admin excluir um produto.
+    """
+    model = Produto
+    template_name = 'produto/produto_confirm_delete.html'
+    context_object_name = 'produto'
+    
+    def get_success_url(self):
+        # Volta para a página da loja de onde o produto era
+        loja_pk = self.object.loja.pk
+        return reverse_lazy('loja:loja_detail', kwargs={'pk': loja_pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = f'Excluir Produto: {self.object.nome}'
+        return context

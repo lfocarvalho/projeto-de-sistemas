@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from django.views.generic import ListView, CreateView, View, DetailView
+# Imports de UpdateView, DeleteView e UserPassesTestMixin foram adicionados
+from django.views.generic import ListView, CreateView, View, DetailView, UpdateView, DeleteView
 import json
 from django.urls import reverse_lazy
 from django.forms import Select, TextInput, Textarea, NumberInput, CheckboxInput, FileInput, EmailInput, TimeInput, URLInput
@@ -10,7 +11,8 @@ from produto.consts import ANIMAL_CHOICES, IDADE_CHOICES, PORTE_CHOICES
 from django.db.models import Q
 from django.http import FileResponse, Http404
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.mixins import LoginRequiredMixin
+# Import UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from loja.forms import FormularioLoja
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import AvaliacaoForm, FormularioLoja
@@ -77,6 +79,10 @@ class ListarLojas(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
+        # ADICIONADO: Passa a informação se o usuário é admin
+        context['is_admin'] = self.request.user.is_authenticated and self.request.user.is_superuser
+        
         if self.request.user.is_authenticated:
             context['favoritas_usuario'] = [
                 loja.id for loja in context['lista_lojas']
@@ -159,6 +165,10 @@ class LojaDetailView(LoginRequiredMixin, DetailView):
 
         context['avaliacoes'] = loja.avaliacoes.select_related('usuario').order_by('-criado_em')
         user = self.request.user
+        
+        # ADICIONADO: Passa a informação se o usuário é admin
+        context['is_admin'] = user.is_authenticated and user.is_superuser
+        
         if user.is_authenticated:
             context['ja_avaliou'] = loja.avaliacoes.filter(usuario=user).exists()
         else:
@@ -250,3 +260,45 @@ def perfil_usuario(request):
         'titulo': 'Meu Perfil',
     }
     return render(request, 'loja/perfil_usuario.html', context)
+
+
+# ===================================================
+# NOVAS VIEWS DE ADMIN ADICIONADAS
+# ===================================================
+
+class AdminRequiredMixin(UserPassesTestMixin):
+    """
+    Garante que o usuário logado é um superusuário.
+    """
+    def test_func(self):
+        return self.request.user.is_superuser
+
+class LojaUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
+    """
+    View para um admin editar uma loja existente.
+    """
+    model = Loja
+    form_class = FormularioLoja
+    template_name = 'loja/novo.html' # Reutiliza o template de criação
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = f'Editando Loja: {self.object.nome}'
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('loja:loja_detail', kwargs={'pk': self.object.pk})
+
+class LojaDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+    """
+    View para um admin excluir uma loja.
+    """
+    model = Loja
+    template_name = 'loja/loja_confirm_delete.html'
+    success_url = reverse_lazy('loja:loja_list')
+    context_object_name = 'loja'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = f'Excluir Loja: {self.object.nome}'
+        return context

@@ -1,13 +1,16 @@
 from django.urls import path
+# Importe o 'views' para que 'views.ProdutoDeleteView' funcione
+from . import views 
 from .views import (
     ProdutoListView,
     ProdutoCreateView,
     ProdutoDetailView,
-    ProdutoUpdateView,
+    ProdutoUpdateView, 
     CategoriaCreateAjaxView,
     AvaliarProdutoView,
     CurtirProdutoView,
-)
+    ProdutoDeleteView,
+    )
 
 app_name = 'produto'
 
@@ -17,6 +20,7 @@ urlpatterns = [
     path('<int:pk>/', ProdutoDetailView.as_view(), name='produto_detail'),
     path('<int:produto_id>/avaliar/', AvaliarProdutoView.as_view(), name='avaliar'),
     path('<int:produto_id>/curtir/', CurtirProdutoView.as_view(), name='curtir'),
-    path('<int:pk>/editar/', ProdutoUpdateView.as_view(), name='produto_update'),
+    path('editar/<int:pk>/', ProdutoUpdateView.as_view(), name='produto_update'),
     path('categoria/nova/', CategoriaCreateAjaxView.as_view(), name='categoria_create_ajax'),
+    path('excluir/<int:pk>/', ProdutoDeleteView.as_view(), name='produto_delete'),
 ]

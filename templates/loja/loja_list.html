@@ -127,13 +127,11 @@
 
 {% block conteudo %}
 <div class="container-fluid">
-    <!-- Header -->
     <div class="header-section">
         <h2><i class="bi bi-shop"></i> Nossas Lojas Parceiras</h2>
         <p>Encontre as melhores lojas de pet care perto de você</p>
     </div>
 
-    <!-- Filtros -->
     <div class="filtros-section">
         <h5><i class="bi bi-funnel-fill"></i> Filtrar Lojas</h5>
         <form method="get" action="">
@@ -172,7 +170,6 @@
         </form>
     </div>
 
-    <!-- Lojas -->
     <div class="row g-4">
         {% for loja in lista_lojas %}
         <div class="col-md-6 col-lg-4">
@@ -196,7 +193,6 @@
                         <div class="distance-badge"> <small>{{ loja.distancia_text|default:"—" }}</small> </div>
                     {% endif %}
                     
-                    <!-- Avaliação da Loja -->
                     <div class="d-flex align-items-center gap-2 my-2">
                         {% with avg_rating=loja.avg_avaliacao|default:0 %}
                             {% for i in "12345" %}
@@ -224,7 +220,18 @@
                         </button>
                         {% endif %}
                     </div>
-                </div>
+                    
+                    {% if is_admin %}
+                    <div class="admin-controls mt-3 pt-3 border-top d-flex gap-2">
+                        <a href="{% url 'loja:loja_update' pk=loja.pk %}" class="btn btn-warning btn-sm w-100">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </a>
+                        <a href="{% url 'loja:loja_delete' pk=loja.pk %}" class="btn btn-danger btn-sm w-100">
+                            <i class="bi bi-trash"></i> Excluir
+                        </a>
+                    </div>
+                    {% endif %}
+                    </div>
             </div>
         </div>
         {% empty %}

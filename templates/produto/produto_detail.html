@@ -187,6 +187,22 @@
         color: #999;
     }
 
+    /* Estilo para os botões de admin */
+    .admin-controls {
+        background: #fff8e1;
+        border: 1px solid #ffe58f;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .admin-controls h5 {
+        color: #664d03;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+
     @media (max-width: 768px) {
         .produto-header h1 {
             font-size: 1.8rem;
@@ -204,10 +220,20 @@
 
 {% block conteudo %}
 <div class="container mt-4">
+
+    {% if is_admin %}
+    <div class="admin-controls mb-3 p-3">
+        <h5 class="mb-2"><i class="bi bi-shield-lock"></i> Painel do Admin (Produto)</h5>
+        <a href="{% url 'produto:produto_update' pk=produto.pk %}" class="btn btn-warning btn-sm">
+            <i class="bi bi-pencil-square"></i> Editar Produto
+        </a>
+        <a href="{% url 'produto:produto_delete' pk=produto.pk %}" class="btn btn-danger btn-sm">
+            <i class="bi bi-trash"></i> Excluir Produto
+        </a>
+    </div>
+    {% endif %}
     <div class="row g-4">
-        <!-- Coluna da Esquerda: Produto e Descrição -->
         <div class="col-lg-7">
-            <!-- Card do Produto Principal -->
             <div class="produto-header">
                 <div class="row g-4 align-items-center">
                     <div class="col-md-6">
@@ -259,12 +285,14 @@
                 </div>
             </div>
 
-            <!-- Descrição -->
             <div class="descricao-section mt-4">
                 <h3><i class="bi bi-info-circle"></i> Descrição</h3>
                 <p>{{ produto.descricao|default:"Este produto não possui uma descrição detalhada." }}</p>
                 
-                {% if user.is_superuser or user.email == produto.loja.email %}
+                {% comment %} Este botão de editar é para o dono da loja, que é diferente do admin.
+                             O botão de admin já está no topo da página.
+                {% endcomment %}
+                {% if not is_admin and user.email == produto.loja.email %}
                 <a href="{% url 'produto:produto_update' produto.pk %}" class="btn btn-secondary mt-3">
                     <i class="bi bi-pencil-square"></i> Editar Produto
                 </a>
@@ -272,9 +300,7 @@
             </div>
         </div>
 
-        <!-- Coluna da Direita: Comparador e Avaliações -->
         <div class="col-lg-5">
-            <!-- Comparador de Preços -->
             <div class="ofertas-section">
                 <h3><i class="bi bi-tag"></i> Disponível em {{ ofertas.count }} loja(s)</h3>
                 
@@ -291,14 +317,12 @@
                 </div>
             </div>
 
-            <!-- Seção de Avaliações -->
             <div class="avaliacoes-section mt-4">
                 <h3><i class="bi bi-star"></i> Avaliações do Produto</h3>
 
-                <!-- Formulário de Avaliação -->
                 {% if user.is_authenticated %}
                     {% if ja_avaliou %}
-                        <div class="alerta-ja-avaliou">
+                        <div class="alerta-ja-avaliou" style="background: #e6fffa; border-left: 4px solid var(--primary-color); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
                             <strong><i class="bi bi-check-circle"></i> Obrigado!</strong> Você já avaliou este produto. Sua avaliação foi registrada com sucesso.
                         </div>
                     {% else %}
@@ -307,7 +331,6 @@
                             <form method="post" action="{% url 'produto:avaliar' produto.id %}" id="form-avaliacao-produto">
                                 {% csrf_token %}
 
-                                <!-- Estrelas -->
                                 <div class="mb-3">
                                     <label class="form-label"><strong>Sua Nota</strong></label>
                                     <div class="rating mb-2" style="justify-content: center;">
@@ -319,7 +342,6 @@
                                         {% endfor %}
                                     </div>
                                 </div>
-                                <!-- Caixa de comentário -->
                                 <div class="mb-3">
                                     <label for="comentario" class="form-label"><strong>Comentário (Opcional)</strong></label>
                                     <textarea name="comentario" id="comentario" class="form-control" placeholder="Compartilhe sua experiência com este produto..." rows="3"></textarea>
@@ -338,7 +360,6 @@
                     </div>
                 {% endif %}
 
-                <!-- Lista de Avaliações -->
                 <div class="mt-4">
                     <h4 style="font-size: 1.3rem; font-weight: 700; color: var(--primary-color); margin-bottom: 1.5rem;">
                         <i class="bi bi-chat-dots"></i> Avaliações de Clientes
