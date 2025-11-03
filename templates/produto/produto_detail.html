@@ -336,7 +336,7 @@
                                     <div class="rating mb-2" style="justify-content: center;">
                                         {% for i in "12345" %} {# Ordem correta para o JS funcionar da esquerda para a direita #}
                                             <input type="radio" id="star-produto-{{ i }}" name="nota" value="{% widthratio forloop.counter 1 -1 as neg_counter %}{{ 6|add:neg_counter }}" class="d-none">
-                                            <label for="star-produto-{{ i }}" class="star-label" style="cursor:pointer; font-size:2.5rem; order: {{ i }};">
+                                            <label for="star-produto-{{ i }}" class="star-label" style="cursor:pointer; font-size:2.5rem; order: {{ i }};" >
                                                 <i class="bi bi-star-fill"></i>
                                             </label>
                                         {% endfor %}

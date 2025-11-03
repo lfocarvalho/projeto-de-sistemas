@@ -1,4 +1,3 @@
-from multiprocessing import context
 from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -30,7 +29,7 @@ class CriarAgendamento(LoginRequiredMixin, View):
             agendamento.save()
             
             messages.success(request, "Agendamento solicitado com sucesso! Aguarde a confirmação.")
-            return redirect('loja:perfil_usuario')
+            return redirect('agendamento:listar_agendamento')
 
         context = {
             'form': form,
@@ -43,12 +42,13 @@ class ListarAgendamento(LoginRequiredMixin, View):
     def get(self, request):
         agendamentos_futuros = Agendamento.objects.filter(
             usuario=request.user,
-            data_hora__gte=timezone.now()
+            status__in=['PENDENTE', 'CONFIRMADO']
         ).order_by('data_hora')
 
         agendamentos_passados = Agendamento.objects.filter(
             usuario=request.user,
-            data_hora__lt=timezone.now()).order_by('-data_hora')
+            status__in=['CONCLUIDO', 'CANCELADO']
+            ).order_by('-data_hora')
         
         context = {
             'agendamentos_futuros': agendamentos_futuros,
