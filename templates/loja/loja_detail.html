@@ -372,6 +372,11 @@
                 </p>
 
                 {% if user.is_authenticated %}
+                <div class="loja-actions align-items-center">
+                    <a class="btn-custom-primary {% if request.resolver_match.url_name == 'criar_agendamento' %}active{% endif %}" href="{% url 'agendamento:criar_agendamento' loja_id=loja.pk %}"> 
+                        <i class="bi bi-calendar-event"></i>  Agendar Horário
+                    </a>
+                </div>
                 <div class="loja-actions align-items-center" style="height: 2.5rem;">
                     <button type="button" class="btn-favoritar-loja {% if favoritada %}curtido{% endif %}"
                         data-loja-id="{{ loja.id }}" data-url="{% url 'loja:favoritar-loja' loja.id %}"
@@ -381,8 +386,7 @@
                         <span>{% if favoritada %}Favoritado{% else %}Favoritar{% endif %}</span>
                     </button>
                     <span class="favoritos-count" id="favoritos-count-{{ loja.id }}">
-                        <i class="bi bi-heart-fill"></i> <span id="favoritos-count-{{ loja.id }}">{{
-                            loja.favoritada_por.count }}</span> favoritos
+                        <i class="bi bi-heart-fill"></i> <span id="favoritos-count-{{ loja.id }}">{{loja.favoritada_por.count }}</span> favoritos
                     </span>
                 </div>
                 {% endif %}
@@ -426,8 +430,7 @@
                                 <select name="animal" id="animal" class="form-select">
                                     <option value="">Todos</option>
                                     {% for val, name in animal_choices %}
-                                    <option value="{{ val }}" {% if request.GET.animal == val %}selected{% endif %}>{{
-                                        name }}</option>
+                                    <option value="{{ val }}" {% if request.GET.animal == val %}selected{% endif %}>{{name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -465,16 +468,15 @@
 
                                 <div class="d-flex align-items-center gap-2 my-2">
                                     {% for i in "12345" %}
-                                    {% if forloop.counter <= produto.avaliacao_media %} <i
+                                        {% if forloop.counter <= produto.avaliacao_media %} <i
                                         class="bi bi-star-fill text-warning" style="font-size: 0.85rem;"></i>
                                         {% elif forloop.counter|add:"-1" < produto.avaliacao_media %} <i
                                             class="bi bi-star-half text-warning" style="font-size: 0.85rem;"></i>
                                             {% else %}
                                             <i class="bi bi-star text-warning" style="font-size: 0.85rem;"></i>
                                             {% endif %}
-                                            {% endfor %}
-                                            <small class="text-muted">{{ produto.avaliacao_media|floatformat:1
-                                                }}/5</small>
+                                    {% endfor %}
+                                            <small class="text-muted">{{ produto.avaliacao_media|floatformat:1}}/5</small>
                                 </div>
 
                                 <p class="card-text flex-grow-1 small">{{ produto.descricao|truncatewords:15 }}</p>
