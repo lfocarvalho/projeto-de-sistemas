@@ -1,0 +1,110 @@
+{% extends 'painel_lojista/dashboard_base.html' %}
+{% load static %}
+
+{% block dashboard_conteudo %}
+
+{% if is_admin_dashboard %}
+    <div class="alert alert-info">
+        <i class="bi bi-shield-lock"></i> 
+        Você está vendo as estatísticas de <strong>todo o site</strong> como Superusuário.
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="stat-card" style="background: linear-gradient(135deg, #0d6efd, #0d9efd);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ total_lojas|default:"0" }}</div>
+                        <div class="stat-label">Loja{{ total_lojas|pluralize }} Cadastrada{{ total_lojas|pluralize }}</div>
+                    </div>
+                    <i class="bi bi-shop stat-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card" style="background: linear-gradient(135deg, #198754, #1ed760);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ total_produtos|default:"0" }}</div>
+                        <div class="stat-label">Produto{{ total_produtos|pluralize }} no Total</div>
+                    </div>
+                    <i class="bi bi-bag-check-fill stat-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card" style="background: linear-gradient(135deg, #ffc107, #ffdb07);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ media_geral_avaliacoes|floatformat:1|default:"N/A" }}</div>
+                        <div class="stat-label">Média de Avaliação (Lojas)</div>
+                    </div>
+                    <i class="bi bi-star-fill stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% else %}
+    <div class="alert alert-light">
+        Bem-vindo, <strong>{{ request.user.username }}</strong>! Aqui você gerencia sua loja.
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="stat-card" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ total_produtos|default:"0" }}</div>
+                        <div class="stat-label">Produto{{ total_produtos|pluralize }} Cadastrado{{ total_produtos|pluralize }}</div>
+                    </div>
+                    <i class="bi bi-bag-check-fill stat-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="stat-card" style="background: linear-gradient(135deg, #ffc107, #ffdb07);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ loja_usuario.avaliacao_media|floatformat:1|default:"N/A" }} <small>/ 5</small></div>
+                        <div class="stat-label">Avaliação da sua Loja</div>
+                    </div>
+                    <i class="bi bi-star-fill stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-5">
+        <div class="card-header">
+            <i class="bi bi-clock-history"></i> Produtos Adicionados Recentemente
+        </div>
+        <div class="card-body">
+            {% if produtos_recentes %}
+                <ul class="list-group list-group-flush">
+                    {% for produto in produtos_recentes %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ produto.nome }}</strong>
+                            <br>
+                            <small class="text-muted">R$ {{ produto.preco|floatformat:2 }}</small>
+                        </div>
+                        <a href="{% url 'produto:produto_update' pk=produto.pk %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-center text-muted">Você ainda não cadastrou nenhum produto.</p>
+                <div class="text-center">
+                    <a href="{% url 'painel_lojista:meus_produtos_list' %}" class="btn btn-custom-primary">
+                        <i class="bi bi-plus-circle"></i> Cadastrar primeiro produto
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}

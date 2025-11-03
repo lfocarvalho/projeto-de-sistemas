@@ -18,17 +18,19 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from petcareapp.views import *
+from .views import Login, Logout, Cadastro # Importa as views de autenticação
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', Login.as_view(), name='login'),
-    path('loja/', include('loja.urls'), name='loja'),
-    path('produto/', include('produto.urls')),
+    # URLs de Autenticação
+    path('login/', Login.as_view(), name='login'),
+    path('logout/', Logout.as_view(), name='logout'),
     path('cadastro/', Cadastro.as_view(), name='cadastro'),
-    path('logout/', Logout.as_view(), name = 'logout')
-]
 
-if settings.DEBUG:
-    # Adiciona a rota para servir arquivos de mídia em modo de desenvolvimento
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('admin/', admin.site.urls),
+    path('', include('produto.urls', namespace='produto')), # Define a lista de produtos como página inicial
+    path('loja/', include('loja.urls', namespace='loja')), # Inclui as URLs do app loja
+    path('dashboard/', include('painel_lojista.urls', namespace='painel_lojista')), # Inclui as URLs do painel do lojista
+    path('accounts/', include('allauth.urls')),
+    path('agendamento/', include('agendamento.urls')),
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # Para servir arquivos de mídia em desenvolvimento
