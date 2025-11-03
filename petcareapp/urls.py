@@ -30,5 +30,7 @@ urlpatterns = [
     path('', include('produto.urls', namespace='produto')), # Define a lista de produtos como página inicial
     path('loja/', include('loja.urls', namespace='loja')), # Inclui as URLs do app loja
     path('dashboard/', include('painel_lojista.urls', namespace='painel_lojista')), # Inclui as URLs do painel do lojista
+    path('accounts/', include('allauth.urls')),
+    path('agendamento/', include('agendamento.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # Para servir arquivos de mídia em desenvolvimento
