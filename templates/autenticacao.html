@@ -2,7 +2,10 @@
 <html lang="pt-br">
 
 <head>
+    
     {% load static %}
+
+    {% load socialaccount %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login PetCare</title>
@@ -44,6 +47,13 @@
                     <a class="btn btn-secondary" href="{% url 'cadastro' %}">Criar uma conta</a>
                 </div>
             </form>
+            <div class="d-grid gap-2 mt-4">
+                <br>
+                <a href="{% provider_login_url 'google' %}" class="btn btn-custom-primary" >
+                    <span class="fw-bold">Login com  </span>
+                    <img src="{% static 'img/google.png' %}" width="30" height="30" alt="Google">
+                </a>
+            </div>
         </div>
     </div>
 </body>

@@ -157,7 +157,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link disabled" href="#"> {# Mantido desabilitado por enquanto #}
+                            <a class="nav-link {% if request.resolver_match.url_name == 'listar_agendamento' %}active{% endif %}" href="{% url 'agendamento:listar_agendamento' %}"> {# Mantido desabilitado por enquanto #}
                                 <i class="bi bi-calendar-event"></i> Agendamentos
                             </a>
                         </li>

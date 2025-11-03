@@ -20,6 +20,7 @@ from django.db.models.functions import Radians, Sin, Cos, Sqrt, ATan2
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.db.models import Avg
+from agendamento.models import Agendamento
 
 
 
@@ -249,6 +250,17 @@ def perfil_usuario(request):
     """
     Exibe a página de perfil do usuário com suas informações e atividades.
     """
+
+    agendamentos_futuros = Agendamento.objects.filter(
+        usuario=request.user,
+        data_hora__gte=timezone.now() # Não se esqueça de importar timezone
+      ).order_by('data_hora')
+    
+    agendamentos_passados = Agendamento.objects.filter(
+        usuario=request.user,
+        data_hora__lt=timezone.now()
+      ).order_by('-data_hora')
+
     user = request.user
     lojas_favoritas = user.lojas_favoritadas.all().order_by('nome')
     avaliacoes_usuario = Avaliacao.objects.filter(usuario=user).select_related('loja').order_by('-criado_em')
@@ -259,6 +271,8 @@ def perfil_usuario(request):
         'total_favoritos': lojas_favoritas.count(),
         'total_avaliacoes': avaliacoes_usuario.count(),
         'titulo': 'Meu Perfil',
+        'agendamentos_futuros': agendamentos_futuros,
+        'agendamentos_passados': agendamentos_passados,
     }
     return render(request, 'loja/perfil_usuario.html', context)
 

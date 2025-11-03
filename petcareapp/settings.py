@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import environ
+import os
+from pathlib import Path
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,10 +42,34 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'loja',
     'produto',
     'painel_lojista',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'agendamento',
+
+    #PROVIDERS
+    'allauth.socialaccount.providers.google',
 ]
+
+SITE_ID = 1
+
+# Inicializa o django-environ
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+# Agora você pode ler as variáveis
+SECRET_KEY = env('SECRET_KEY')
+DEBUG = env.bool('DEBUG', default=False)
+
+# Nossas novas variáveis do Google
+GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET')
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -50,6 +79,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'petcareapp.urls'
@@ -86,6 +116,12 @@ DATABASES = {
     }
 }
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -104,6 +140,26 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        # As chaves que lemos do .env
+        'APP': {
+            'client_id': GOOGLE_CLIENT_ID,
+            'secret': GOOGLE_CLIENT_SECRET,
+            'key': ''  # Não é mais usado, mas pode deixar vazio
+        },
+        # O que vamos pedir ao Google
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        # Como vamos pedir (login "online" é padrão)
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
 
 
 # Internationalization
@@ -138,3 +194,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # URL para onde o usuário é redirecionado para fazer login
 LOGIN_URL = 'login'
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
