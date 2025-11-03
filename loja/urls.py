@@ -12,6 +12,8 @@ urlpatterns = [
     path('<int:loja_id>/favoritar/', views.favoritar_loja, name='favoritar-loja'),
     path('mapa/', views.mapa_lojas_view, name='mapa_view'),
     path('perfil/', views.perfil_usuario, name='perfil_usuario'),
+    path('avaliacao/<int:pk>/editar/', views.AvaliacaoUpdateView.as_view(), name='avaliacao_update'),
+    path('avaliacao/<int:pk>/excluir/', views.AvaliacaoDeleteView.as_view(), name='avaliacao_delete'),
 
     # NOVAS ROTAS DE ADMIN ADICIONADAS
     path('editar/<int:pk>/', views.LojaUpdateView.as_view(), name='loja_update'),
@@ -20,4 +22,6 @@ urlpatterns = [
     # Rota da API
     path('api/lojas/', api_listar_lojas, name='api-listar-lojas'),
     path('api/loja/<int:loja_id>/salvar-localizacao/', SalvarLocalizacaoLojaView.as_view(), name='api-salvar-localizacao'),
+
+    
 ]

@@ -1,5 +1,10 @@
+// Removemos o listener de 'DOMContentLoaded' duplicado e unificamos tudo em um só.
 document.addEventListener('DOMContentLoaded', () => {
-    // Script para avaliação com estrelas (componente reutilizável)
+    
+    // ===================================================================
+    // Parte 1: Script para avaliação com estrelas (Formulário NOVO)
+    // (Seu código original, seleciona .rating)
+    // ===================================================================
     document.querySelectorAll('.rating').forEach(ratingContainer => {
         const estrelas = ratingContainer.querySelectorAll('label');
         const inputs = ratingContainer.querySelectorAll('input');
@@ -9,17 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Ao clicar, garante que o input correspondente seja marcado
                 const input = document.getElementById(label.htmlFor);
                 if (input) input.checked = true;
-                // O CSS cuidará da atualização visual com base no :checked
+                // O CSS cuidará da atualização visual
             });
-            // Removemos os listeners de mouseover e mouseout.
-            // O CSS puro agora controla o efeito de hover, que é mais eficiente
-            // e já está configurado corretamente no arquivo rating.css.
-            // label.addEventListener('mouseover', () => atualizarEstrelas(idx));
-            // label.addEventListener('mouseout', () => atualizarEstrelas());
         });
     });
 
-    // Envio AJAX de avaliação de produto
+    // ===================================================================
+    // Parte 2: Envio AJAX de avaliação de PRODUTO
+    // (Seu código original)
+    // ===================================================================
     const formAvaliacaoProduto = document.getElementById('form-avaliacao-produto');
     if (formAvaliacaoProduto) {
         formAvaliacaoProduto.addEventListener('submit', async (e) => {
@@ -41,11 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /**
-     * Função genérica para lidar com a ação de curtir/favoritar.
-     * @param {MouseEvent} event - O evento de clique.
-     * @param {string} type - 'loja' ou 'produto'.
-     */
+    // ===================================================================
+    // Parte 3: Função genérica para Curtir/Favoritar (Lojas e Produtos)
+    // (Seu código original)
+    // ===================================================================
     async function handleLikeClick(event) {
         event.preventDefault();
         const button = event.currentTarget;
@@ -76,23 +78,95 @@ document.addEventListener('DOMContentLoaded', () => {
             const countElId = button.dataset.countTarget;
             if (countElId) {
                 const countEl = document.getElementById(countElId);
+                // Usamos '??' para pegar o primeiro valor não nulo (curtidas ou favoritos)
                 if (countEl) countEl.textContent = data.total_curtidas ?? data.total_favoritos;
             }
         } catch (error) {
             console.error('Erro ao processar a ação de curtir:', error);
         }
     }
-
+    // Atribui a função de clique aos botões
     document.querySelectorAll('.btn-curtir-loja, .btn-curtir-produto, .btn-favoritar-loja').forEach(btn => {
         btn.addEventListener('click', handleLikeClick);
     });
-});
+// ===================================================================
+    // Parte 4: LÓGICA DO MODAL DE EDIÇÃO DE AVALIAÇÃO DA LOJA
+    // (BLOCO CORRIGIDO)
+    // ===================================================================
+    const modalEditarAvaliacao = document.getElementById('modalEditarAvaliacao');
+    
+    if (modalEditarAvaliacao) {
+        const form = document.getElementById('edit-avaliacao-form');
+        const comentarioInput = document.getElementById('edit-comentario');
+        const starLabels = form.querySelectorAll('.star-label-modal');
+        const starRadios = form.querySelectorAll('input[name="nota"]');
 
-/* Reutilizável: procura elementos .star-rating e habilita meia-estrela */
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.star-rating').forEach(initStarRating);
-});
+        // Evento que dispara QUANDO O MODAL ESTÁ SENDO ABERTO
+        modalEditarAvaliacao.addEventListener('show.bs.modal', (event) => {
+            const button = event.relatedTarget; 
+            const formAction = button.getAttribute('data-form-action');
+            const nota = button.getAttribute('data-nota');
+            const comentario = button.getAttribute('data-comentario');
+            
+            form.setAttribute('action', formAction);
+            comentarioInput.value = comentario;
+            
+            // Limpa seleções anteriores
+            starLabels.forEach(label => label.classList.remove('selected'));
+            starRadios.forEach(radio => radio.checked = false);
 
+            const radioToCheck = form.querySelector('input[name="nota"][value="' + nota + '"]');
+            
+            if (radioToCheck) {
+                radioToCheck.checked = true;
+                const labelForRadio = form.querySelector('label[for="' + radioToCheck.id + '"]');
+                
+                if (labelForRadio) {
+                    // "Acende" a estrela clicada e todas as seguintes (visualmente à esquerda)
+                    labelForRadio.classList.add('selected');
+                    let el = labelForRadio;
+                    // CORREÇÃO AQUI: usa nextElementSibling
+                    while (el = el.nextElementSibling) { 
+                        if (el.tagName === 'LABEL') {
+                            el.classList.add('selected');
+                        }
+                    }
+                }
+            }
+        });
+
+        // Adiciona o comportamento de clique nas estrelas DO MODAL
+        starLabels.forEach(label => {
+            label.addEventListener('click', () => {
+                // Limpa todas as estrelas
+                starLabels.forEach(lbl => lbl.classList.remove('selected'));
+                
+                // "Acende" a estrela clicada e todas as seguintes (visualmente à esquerda)
+                label.classList.add('selected');
+                let el = label;
+                // CORREÇÃO AQUI: usa nextElementSibling
+                while (el = el.nextElementSibling) {
+                    if (el.tagName === 'LABEL') {
+                        el.classList.add('selected');
+                    }
+                }
+            });
+        });
+    } // --- Fim da lógica do Modal ---
+
+    // ===================================================================
+    // Parte 5: Reutilizável: procura .star-rating e habilita meia-estrela
+    // (Seu código original, agora dentro do listener unificado)
+    // ===================================================================
+    document.querySelectorAll('.star-rating').forEach(initStarRating);
+
+}); // --- FIM DO 'DOMContentLoaded' PRINCIPAL ---
+
+
+// ===================================================================
+// Parte 6: Função initStarRating e helpers (para exibição de meia-estrela)
+// (Seu código original, movido para fora do DOMContentLoaded)
+// ===================================================================
 function initStarRating(container) {
   const stars = Array.from(container.querySelectorAll('.star'));
   let current = parseFloat(container.dataset.rating) || 0;

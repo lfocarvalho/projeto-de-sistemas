@@ -57,7 +57,8 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: 1.5rem; /* Aumenta o tamanho do ícone */
+        font-size: 1.5rem;
+        /* Aumenta o tamanho do ícone */
         cursor: pointer;
     }
 
@@ -66,7 +67,8 @@
     }
 
     .btn-favoritar-loja span {
-        display: none; /* Esconde o texto "Favoritar" */
+        display: none;
+        /* Esconde o texto "Favoritar" */
     }
 
     .favoritos-count {
@@ -242,10 +244,13 @@
         transition: all 0.2s ease;
         cursor: pointer;
     }
+
     .btn-curtir-produto:hover {
         transform: scale(1.1);
     }
-    .btn-curtir-produto:focus, .btn-curtir-produto:active {
+
+    .btn-curtir-produto:focus,
+    .btn-curtir-produto:active {
         outline: none !important;
         box-shadow: none !important;
         background-color: transparent !important;
@@ -264,7 +269,7 @@
         border-radius: 8px;
         margin-bottom: 1.5rem;
     }
-    
+
     /* Estilo para os botões de admin */
     .admin-controls {
         background: #fff8e1;
@@ -284,7 +289,8 @@
     .produto-card .admin-controls {
         padding: 0.75rem;
         margin-top: 1rem;
-        margin-bottom: 0; /* Remove margem inferior dentro do card */
+        margin-bottom: 0;
+        /* Remove margem inferior dentro do card */
         border-top: 1px solid #ffe58f;
         background: #fffcf5;
     }
@@ -318,8 +324,8 @@
 {% endblock %}
 
 {% block menu_superior %}
-    <section class="menu-section">
-    </section>
+<section class="menu-section">
+</section>
 {% endblock %}
 
 {% block carrossel %}
@@ -345,11 +351,13 @@
     <div class="row g-4 mt-4 mb-4">
         <div class="col-lg-4">
             {% if loja.foto %}
-                <img src="{{ MEDIA_URL }}{{ loja.foto }}" class="img-fluid rounded shadow" style="width: 100%; max-height: 300px; object-fit: cover;" alt="{{ loja.nome }}">
+            <img src="{{ MEDIA_URL }}{{ loja.foto }}" class="img-fluid rounded shadow"
+                style="width: 100%; max-height: 300px; object-fit: cover;" alt="{{ loja.nome }}">
             {% else %}
-                <div class="d-flex align-items-center justify-content-center rounded shadow" style="width: 100%; height: 300px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);">
-                    <i class="bi bi-shop" style="font-size: 5rem; color: rgba(255, 255, 255, 0.5);"></i>
-                </div>
+            <div class="d-flex align-items-center justify-content-center rounded shadow"
+                style="width: 100%; height: 300px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);">
+                <i class="bi bi-shop" style="font-size: 5rem; color: rgba(255, 255, 255, 0.5);"></i>
+            </div>
             {% endif %}
         </div>
         <div class="col-lg-8">
@@ -362,34 +370,32 @@
                 <p class="descricao">
                     {{ loja.descricao|default:"Esta loja ainda não forneceu uma descrição." }}
                 </p>
-        
-        {% if user.is_authenticated %}
+
+                {% if user.is_authenticated %}
                 <div class="loja-actions align-items-center" style="height: 2.5rem;">
                     <button type="button" class="btn-favoritar-loja {% if favoritada %}curtido{% endif %}"
-                            data-loja-id="{{ loja.id }}"
-                            data-url="{% url 'loja:favoritar-loja' loja.id %}"
-                            data-csrf="{{ csrf_token }}"
-                            data-count-target="favoritos-count-{{ loja.id }}"
-                            title="Favoritar loja"
-                    >
+                        data-loja-id="{{ loja.id }}" data-url="{% url 'loja:favoritar-loja' loja.id %}"
+                        data-csrf="{{ csrf_token }}" data-count-target="favoritos-count-{{ loja.id }}"
+                        title="Favoritar loja">
                         <i class="bi {% if favoritada %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
                         <span>{% if favoritada %}Favoritado{% else %}Favoritar{% endif %}</span>
                     </button>
                     <span class="favoritos-count" id="favoritos-count-{{ loja.id }}">
-                        <i class="bi bi-heart-fill"></i> <span id="favoritos-count-{{ loja.id }}">{{ loja.favoritada_por.count }}</span> favoritos
+                        <i class="bi bi-heart-fill"></i> <span id="favoritos-count-{{ loja.id }}">{{
+                            loja.favoritada_por.count }}</span> favoritos
                     </span>
                 </div>
                 {% endif %}
 
                 {% comment %} O botão de editar localização foi movido para o painel de admin {% endcomment %}
-                
+
             </div>
         </div>
     </div>
 
     <div class="produtos-section">
         <h2><i class="bi bi-bag-check"></i> Nossos Produtos</h2>
-        
+
         <div class="row g-4">
             <div class="col-lg-3">
                 <div class="card filtros-card">
@@ -400,14 +406,18 @@
                         <form method="get" action="">
                             <div class="mb-3">
                                 <label for="q" class="form-label"><strong>Nome do Produto</strong></label>
-                                <input type="text" name="q" id="q" class="form-control" value="{{ request.GET.q }}" placeholder="Buscar...">
+                                <input type="text" name="q" id="q" class="form-control" value="{{ request.GET.q }}"
+                                    placeholder="Buscar...">
                             </div>
                             <div class="mb-3">
                                 <label for="categoria" class="form-label"><strong>Categoria</strong></label>
                                 <select name="categoria" id="categoria" class="form-select">
                                     <option value="">Todas</option>
                                     {% for cat in categorias %}
-                                    <option value="{{ cat.id }}" {% if request.GET.categoria == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.nome }}</option>
+                                    <option value="{{ cat.id }}" {% if request.GET.categoria == cat.id|stringformat:"s" %}
+                                        selected {% endif %}>
+                                        {{ cat.nome }}
+                                    </option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -416,7 +426,8 @@
                                 <select name="animal" id="animal" class="form-select">
                                     <option value="">Todos</option>
                                     {% for val, name in animal_choices %}
-                                    <option value="{{ val }}" {% if request.GET.animal == val %}selected{% endif %}>{{ name }}</option>
+                                    <option value="{{ val }}" {% if request.GET.animal == val %}selected{% endif %}>{{
+                                        name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -437,11 +448,13 @@
                         <div class="card h-100 produto-card">
                             <a href="{% url 'produto:produto_detail' produto.pk %}" class="text-decoration-none">
                                 {% if produto.foto %}
-                                    <img src="{{ produto.foto.url }}" class="card-img-top produto-img" alt="{{ produto.nome }}">
+                                <img src="{{ produto.foto.url }}" class="card-img-top produto-img"
+                                    alt="{{ produto.nome }}">
                                 {% else %}
-                                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);">
-                                        <i class="bi bi-bag" style="font-size: 3rem; color: rgba(255, 255, 255, 0.5);"></i>
-                                    </div>
+                                <div class="card-img-top d-flex align-items-center justify-content-center"
+                                    style="height: 200px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);">
+                                    <i class="bi bi-bag" style="font-size: 3rem; color: rgba(255, 255, 255, 0.5);"></i>
+                                </div>
                                 {% endif %}
                             </a>
                             <div class="card-body d-flex flex-column">
@@ -449,35 +462,38 @@
                                 <p class="card-text text-muted small">
                                     <strong>{{ produto.categoria.nome|default:"Sem categoria" }}</strong>
                                 </p>
-                                
+
                                 <div class="d-flex align-items-center gap-2 my-2">
                                     {% for i in "12345" %}
-                                        {% if forloop.counter <= produto.avaliacao_media %}
-                                            <i class="bi bi-star-fill text-warning" style="font-size: 0.85rem;"></i>
-                                        {% elif forloop.counter|add:"-1" < produto.avaliacao_media %}
-                                            <i class="bi bi-star-half text-warning" style="font-size: 0.85rem;"></i>
-                                        {% else %}
+                                    {% if forloop.counter <= produto.avaliacao_media %} <i
+                                        class="bi bi-star-fill text-warning" style="font-size: 0.85rem;"></i>
+                                        {% elif forloop.counter|add:"-1" < produto.avaliacao_media %} <i
+                                            class="bi bi-star-half text-warning" style="font-size: 0.85rem;"></i>
+                                            {% else %}
                                             <i class="bi bi-star text-warning" style="font-size: 0.85rem;"></i>
-                                        {% endif %}
-                                    {% endfor %}
-                                    <small class="text-muted">{{ produto.avaliacao_media|floatformat:1 }}/5</small>
+                                            {% endif %}
+                                            {% endfor %}
+                                            <small class="text-muted">{{ produto.avaliacao_media|floatformat:1
+                                                }}/5</small>
                                 </div>
 
                                 <p class="card-text flex-grow-1 small">{{ produto.descricao|truncatewords:15 }}</p>
-                                
+
                                 <div class="mt-auto">
                                     <p class="preco mb-2">R$ {{ produto.preco|floatformat:2 }}</p>
                                     <div class="d-flex gap-2">
-                                        <a href="{% url 'produto:produto_detail' produto.pk %}" class="btn btn-custom-primary flex-grow-1 btn-sm">
+                                        <a href="{% url 'produto:produto_detail' produto.pk %}"
+                                            class="btn btn-custom-primary flex-grow-1 btn-sm">
                                             <i class="bi bi-eye"></i> Ver Detalhes
                                         </a>
                                         {% if user.is_authenticated %}
-                                        <button type="button" class="btn-curtir-produto {% if produto.id in curtidos_usuario %}curtido{% endif %}"
-                                                data-url="{% url 'produto:curtir' produto.id %}" 
-                                                data-csrf="{{ csrf_token }}"
-                                                data-count-target="curtidas-count-{{ produto.id }}"
-                                                title="Curtir produto">
-                                            <i class="bi {% if produto.id in curtidos_usuario %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                                        <button type="button"
+                                            class="btn-curtir-produto {% if produto.id in curtidos_usuario %}curtido{% endif %}"
+                                            data-url="{% url 'produto:curtir' produto.id %}"
+                                            data-csrf="{{ csrf_token }}"
+                                            data-count-target="curtidas-count-{{ produto.id }}" title="Curtir produto">
+                                            <i
+                                                class="bi {% if produto.id in curtidos_usuario %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
                                         </button>
                                         {% endif %}
                                     </div>
@@ -485,21 +501,24 @@
 
                                 {% if is_admin %}
                                 <div class="admin-controls mt-3 pt-3 border-top d-flex gap-2">
-                                    <a href="{% url 'produto:produto_update' pk=produto.pk %}" class="btn btn-warning btn-sm w-100">
+                                    <a href="{% url 'produto:produto_update' pk=produto.pk %}"
+                                        class="btn btn-warning btn-sm w-100">
                                         <i class="bi bi-pencil-square"></i> Editar Produto
                                     </a>
-                                    <a href="{% url 'produto:produto_delete' pk=produto.pk %}" class="btn btn-danger btn-sm w-100">
+                                    <a href="{% url 'produto:produto_delete' pk=produto.pk %}"
+                                        class="btn btn-danger btn-sm w-100">
                                         <i class="bi bi-trash"></i> Excluir Produto
                                     </a>
                                 </div>
                                 {% endif %}
-                                </div>
+                            </div>
                         </div>
                     </div>
                     {% empty %}
                     <div class="col-12">
                         <div class="alert alert-info text-center">
-                            <i class="bi bi-info-circle"></i> Nenhum produto encontrado para esta loja ou com os filtros aplicados.
+                            <i class="bi bi-info-circle"></i> Nenhum produto encontrado para esta loja ou com os filtros
+                            aplicados.
                         </div>
                     </div>
                     {% endfor %}
@@ -514,98 +533,162 @@
         <div class="media-avaliacao">
             <div class="stars">
                 {% for i in "12345" %}
-                    {% if forloop.counter <= loja.avaliacao_media %}
-                        <i class="bi bi-star-fill text-warning"></i>
-                    {% elif forloop.counter|add:"-1" < loja.avaliacao_media %}
-                        <i class="bi bi-star-half text-warning"></i>
-                    {% else %}
+                {% if forloop.counter <= loja.avaliacao_media %} <i class="bi bi-star-fill text-warning"></i>
+                    {% elif forloop.counter|add:"-1" < loja.avaliacao_media %} <i class="bi bi-star-half text-warning">
+                        </i>
+                        {% else %}
                         <i class="bi bi-star text-warning"></i>
-                    {% endif %}
-                {% endfor %}
+                        {% endif %}
+                        {% endfor %}
             </div>
             <div class="valor">{{ loja.avaliacao_media|floatformat:1 }}/5</div>
             <div class="total">
                 {% with avaliacoes_count=avaliacoes|length %}
-                    {{ avaliacoes_count }} avaliação{{ avaliacoes_count|pluralize }}
+                {{ avaliacoes_count }} avaliação{{ avaliacoes_count|pluralize }}
                 {% endwith %}
             </div>
         </div>
 
         {% if user.is_authenticated %}
-            {% if ja_avaliou %}
-                <div class="alerta-ja-avaliou">
-                    <strong><i class="bi bi-check-circle"></i> Obrigado!</strong> Você já avaliou esta loja. Sua avaliação foi registrada com sucesso.
-                </div>
-            {% else %}
-                <div class="formulario-avaliacao">
-                    <h4><i class="bi bi-pencil-square"></i> Deixe sua Avaliação</h4>
-                    <form method="post" action="{% url 'loja:avaliar-loja' loja.id %}" id="avaliacao-form">
-                        {% csrf_token %}
-
-                        <div class="mb-3">
-                            <label class="form-label"><strong>Sua Nota</strong></label>
-                            <div class="rating mb-2" style="justify-content: center;">
-                                {% for i in "12345" %}
-                                    <input type="radio" id="star-loja-{{ i }}" name="nota" value="{% widthratio forloop.counter 1 -1 as neg_counter %}{{ 6|add:neg_counter }}" class="d-none">
-                                    <label for="star-loja-{{ i }}" class="star-label" style="cursor:pointer; font-size:2.5rem; order: {{ i }};">
-                                        <i class="bi bi-star-fill"></i>
-                                    </label>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="comentario" class="form-label"><strong>Comentário (Opcional)</strong></label>
-                            <textarea name="comentario" id="comentario" class="form-control" placeholder="Compartilhe sua experiência..." rows="3"></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-custom-primary w-100">
-                            <i class="bi bi-send"></i> Enviar Avaliação
-                        </button>
-                    </form>
-                </div>
-            {% endif %}
+        {% if ja_avaliou %}
+        <div class="alerta-ja-avaliou">
+            <strong><i class="bi bi-check-circle"></i> Obrigado!</strong> Você já avaliou esta loja. Sua avaliação foi
+            registrada com sucesso.
+        </div>
         {% else %}
-            <div class="alert alert-warning text-center">
-                <i class="bi bi-exclamation-triangle"></i> 
-                Faça <a href="{% url 'login' %}" class="alert-link"><strong>login</strong></a> para avaliar esta loja.
-            </div>
+        <div class="formulario-avaliacao">
+            <h4><i class="bi bi-pencil-square"></i> Deixe sua Avaliação</h4>
+            <form method="post" action="{% url 'loja:avaliar-loja' loja.id %}" id="avaliacao-form">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Sua Nota</strong></label>
+                    <div class="rating mb-2" style="justify-content: center;">
+                        {% for i in "12345" %}
+                        <input type="radio" id="star-loja-{{ i }}" name="nota"
+                            value="{% widthratio forloop.counter 1 -1 as neg_counter %}{{ 6|add:neg_counter }}"
+                            class="d-none">
+                        <label for="star-loja-{{ i }}" class="star-label"
+                            style="cursor:pointer; font-size:2.5rem; order: {{ i }};">
+                            <i class="bi bi-star-fill"></i>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="comentario" class="form-label"><strong>Comentário (Opcional)</strong></label>
+                    <textarea name="comentario" id="comentario" class="form-control"
+                        placeholder="Compartilhe sua experiência..." rows="3"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-custom-primary w-100">
+                    <i class="bi bi-send"></i> Enviar Avaliação
+                </button>
+            </form>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="alert alert-warning text-center">
+            <i class="bi bi-exclamation-triangle"></i>
+            Faça <a href="{% url 'login' %}" class="alert-link"><strong>login</strong></a> para avaliar esta loja.
+        </div>
         {% endif %}
 
         <div class="mt-4">
             <h4 style="font-size: 1.3rem; font-weight: 700; color: var(--primary-color); margin-bottom: 1.5rem;">
                 <i class="bi bi-chat-dots"></i> Avaliações de Clientes
             </h4>
-            
+
             {% if avaliacoes %}
-                {% for avaliacao in avaliacoes %}
-                <div class="avaliacao-card">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div>
-                            <span class="usuario">@{{ avaliacao.usuario.username }}</span>
-                            <div class="stars">
-                                {% for i in "12345" %}
-                                    {% if forloop.counter <= avaliacao.nota %}
-                                        <i class="bi bi-star-fill"></i>
-                                    {% else %}
-                                        <i class="bi bi-star"></i>
-                                    {% endif %}
+            {% for avaliacao in avaliacoes %}
+            <div class="avaliacao-card">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <span class="usuario">@{{ avaliacao.usuario.username }}</span>
+                        <div class="stars">
+                            {% for i in "12345" %}
+                            {% if forloop.counter <= avaliacao.nota %} <i class="bi bi-star-fill"></i>
+                                {% else %}
+                                <i class="bi bi-star"></i>
+                                {% endif %}
                                 {% endfor %}
-                            </div>
                         </div>
-                        <span class="data">{{ avaliacao.criado_em|date:"d/m/Y H:i" }}</span>
                     </div>
-                    {% if avaliacao.comentario %}
-                        <p class="comentario">{{ avaliacao.comentario }}</p>
-                    {% endif %}
+                    <span class="data">{{ avaliacao.criado_em|date:"d/m/Y H:i" }}</span>
                 </div>
-                {% endfor %}
+                {% if avaliacao.comentario %}
+                <p class="comentario">{{ avaliacao.comentario }}</p>
+                {% endif %}
+                {% comment %} ...dentro do seu loop for avaliacao... {% endcomment %}
+                {% if user == avaliacao.usuario %}
+                <div class="mt-3 pt-3 border-top d-flex gap-2">
+                    <button type="button" class="btn btn-warning btn-sm btn-edit-avaliacao" data-bs-toggle="modal"
+                        data-bs-target="#modalEditarAvaliacao"
+                        data-form-action="{% url 'loja:avaliacao_update' avaliacao.id %}"
+                        data-nota="{{ avaliacao.nota }}" data-comentario="{{ avaliacao.comentario }}">
+                        <i class="bi bi-pencil-square"></i> Editar
+                    </button>
+
+                    <form method="post" action="{% url 'loja:avaliacao_delete' avaliacao.id %}"
+                        onsubmit="return confirm('Tem certeza que deseja excluir esta avaliação?');" class="mb-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i> Excluir
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
             {% else %}
-                <div class="sem-avaliacoes">
-                    <i class="bi bi-chat-left-text" style="font-size: 2rem; color: #ccc;"></i>
-                    <p style="margin-top: 1rem;">Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>
-                </div>
+            <div class="sem-avaliacoes">
+                <i class="bi bi-chat-left-text" style="font-size: 2rem; color: #ccc;"></i>
+                <p style="margin-top: 1rem;">Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>
+            </div>
             {% endif %}
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalEditarAvaliacao" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" id="edit-avaliacao-form">
+                {% csrf_token %}
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="modalEditarLabel"><i class="bi bi-pencil-square"></i> Editar Avaliação
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Sua Nota</strong></label>
+                        <div class="rating-modal mb-2" style="justify-content: center;">
+                            {% for i in "12345" %}
+                            <input type="radio" id="star-modal-{{ i }}" name="nota"
+                                value="{% widthratio forloop.counter 1 -1 as neg_counter %}{{ 6|add:neg_counter }}"
+                                class="d-none">
+                            <label for="star-modal-{{ i }}" class="star-label-modal"
+                                style="cursor:pointer; font-size:2.5rem; order: {{ i }};">
+                                <i class="bi bi-star-fill"></i>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-comentario" class="form-label"><strong>Comentário</strong></label>
+                        <textarea name="comentario" id="edit-comentario" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-lg"></i> Salvar Alterações
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -2,7 +2,7 @@
 # Imports de UpdateView, DeleteView e UserPassesTestMixin foram adicionados
 from django.views.generic import ListView, CreateView, View, DetailView, UpdateView, DeleteView
 import json
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.forms import Select, TextInput, Textarea, NumberInput, CheckboxInput, FileInput, EmailInput, TimeInput, URLInput
 from .models import Loja, Avaliacao, LojaFavorita
 from django.http import JsonResponse, HttpResponseBadRequest
@@ -20,6 +20,7 @@ from django.db.models.functions import Radians, Sin, Cos, Sqrt, ATan2
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.db.models import Avg
+
 
 
 class ListarLojas(LoginRequiredMixin, ListView):
@@ -301,4 +302,64 @@ class LojaDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['titulo'] = f'Excluir Loja: {self.object.nome}'
+        return context
+    
+class AvaliacaoOwnerMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """
+    Mixin para garantir que o usuário logado é o dono da avaliação.
+    Usa o seu model 'Avaliacao'.
+    """
+    model = Avaliacao  # <- Usa o seu model Avaliacao
+    
+    def test_func(self):
+        # Pega o objeto (avaliação) que está sendo acessado
+        avaliacao = self.get_object()
+        # Retorna True se o usuário da requisição for o mesmo usuário que criou a avaliação
+        return self.request.user == avaliacao.usuario
+
+    def handle_no_permission(self):
+        # Redireciona de volta para a loja se o usuário não for o dono
+        loja_pk = self.get_object().loja.pk
+        return redirect('loja:loja_detail', pk=loja_pk)
+
+
+class AvaliacaoUpdateView(AvaliacaoOwnerMixin, UpdateView):
+    """
+    View para o usuário editar sua própria avaliação.
+    """
+    model = Avaliacao
+    fields = ['nota', 'comentario']  # Campos que o usuário pode editar
+    template_name = 'loja/avaliacao_edit.html' # Novo template que vamos criar
+
+    def get_success_url(self):
+        # Redireciona de volta para a página da loja após editar
+        loja_pk = self.object.loja.pk
+        # Usamos 'reverse' aqui
+        return reverse('loja:loja_detail', kwargs={'pk': loja_pk})
+
+    def get_context_data(self, **kwargs):
+        # Adiciona a loja ao contexto para usar no template do formulário
+        context = super().get_context_data(**kwargs)
+        context['loja'] = self.object.loja
+        context['titulo'] = f'Editar Avaliação - {self.object.loja.nome}'
+        return context
+
+
+class AvaliacaoDeleteView(AvaliacaoOwnerMixin, DeleteView):
+    """
+    View para o usuário excluir sua própria avaliação.
+    """
+    model = Avaliacao
+    template_name = 'loja/avaliacao_confirm_delete.html' # Novo template de confirmação
+    
+    def get_success_url(self):
+        # Redireciona de volta para a página da loja após excluir
+        loja_pk = self.object.loja.pk
+        return reverse('loja:loja_detail', kwargs={'pk': loja_pk})
+
+    def get_context_data(self, **kwargs):
+        # Adiciona a loja e o título ao contexto
+        context = super().get_context_data(**kwargs)
+        context['loja'] = self.object.loja
+        context['titulo'] = f'Excluir Avaliação - {self.object.loja.nome}'
         return context
