@@ -10,11 +10,12 @@
 
     <link href="{% static 'bootstrap-5.3.8-dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <script src="{% static 'bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js' %}"></script>
-    <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet" integrity="sha384-oMIIhJL1T5s+PxJr6+Qb0pO1IRFB6OGMM+J57UBT3UQKxSBSvsb++MkXpu9cLqaJxu" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
     <link href="{% static 'css/padrao.css' %}" rel="stylesheet">
-    <link href="{% static 'css/rating.css' %}" rel="stylesheet">
+    <script src="{% static 'js/back.js' %}"></script>
+    
 
     {% block css_local %}
     <link href="{% static 'css/autenticacao.css' %}" rel="stylesheet">
@@ -23,9 +24,10 @@
 </head>
  <div id="paw-background-container"></div>
 <body class="{% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'cadastro' %}login-page{% endif %}">
+    <!-- Navbar Principal -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'produto:produto_list' %}">
+            <a class="navbar-brand" href="#">
                 <i class="bi bi-heart-pulse"></i> PetCare
             </a>
             
@@ -60,20 +62,9 @@
                 
                 <div class="user-section">
                     {% if user.is_authenticated %}
-                        
-                        {% if is_store_user %}
                         <div class="user-info">
-                            <a href="{% url 'painel_lojista:dashboard_home' %}" class="text-white text-decoration-none fw-bold">
-                                <i class="bi bi-clipboard-data-fill"></i>
-                                <span>Meu Painel</span>
-                            </a>
-                        </div>
-                        {% endif %}
-                        <div class="user-info">
-                            <a href="{% url 'loja:perfil_usuario' %}" class="text-white text-decoration-none">
-                                <i class="bi bi-person-circle"></i>
-                                <span>{{ user.username }}</span>
-                            </a>
+                            <i class="bi bi-person-circle"></i>
+                            <span>{{ user.username }}</span>
                         </div>
                         <a href="{% url 'logout' %}" class="btn-logout"><i class="bi bi-box-arrow-right"></i> Sair</a>
                     {% else %}
@@ -85,8 +76,10 @@
         </div>
     </nav>
 
+    <!-- Conteúdo Principal -->
     <main class="main-container">
-        {% block carrossel %}
+        <!-- Menu Superior -->
+         {% block carrossel %}
                          {% if carousel_images %}
                 <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-indicators">
@@ -152,12 +145,12 @@
                         </li>
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'mapa_view' %}active{% endif %}" href="{% url 'loja:mapa_view' %}">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'mapa_view' %}active{% endif %}" href="#">
                                 <i class="bi bi-map"></i> Localizações
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'listar_agendamento' %}active{% endif %}" href="{% url 'agendamento:listar_agendamento' %}"> {# Mantido desabilitado por enquanto #}
+                            <a class="nav-link disabled" href="#">
                                 <i class="bi bi-calendar-event"></i> Agendamentos
                             </a>
                         </li>
@@ -166,8 +159,10 @@
             {% endblock %}
         </div>
 
+        <!-- Área de Conteúdo Dinâmico -->
         <section id="conteudo" class="content-section">
             {% block conteudo %}
+                <!-- Conteúdo padrão quando não há bloco específico -->
                 <div class="default-content">
                     <i class="bi bi-heart-pulse default-icon"></i>
                     <h3>Sistema de Gerenciamento PetCare</h3>
@@ -177,6 +172,7 @@
         </section>
     </main>
 
+    <!-- Rodapé -->
     <footer class="footer">
         <div class="container">
             <p>© 2023 PetCare - Todos os direitos reservados</p>
@@ -184,7 +180,7 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js" integrity="sha384-SWhFOmxmv1pfTLKVBW7q8uossvuaWNeQFdmaWi6xdldiUjyqG9F6V2R2BOC8gkxx" crossorigin="anonymous"></script>
    
 </body>
 </html>

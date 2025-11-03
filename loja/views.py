@@ -1,27 +1,19 @@
 # -*- coding: utf-8 -*-
-# Imports de UpdateView, DeleteView e UserPassesTestMixin foram adicionados
-from django.views.generic import ListView, CreateView, View, DetailView, UpdateView, DeleteView
-import json
-from django.urls import reverse_lazy, reverse
+from django.views.generic import ListView, CreateView, View, DetailView
+from django.urls import reverse_lazy
 from django.forms import Select, TextInput, Textarea, NumberInput, CheckboxInput, FileInput, EmailInput, TimeInput, URLInput
 from .models import Loja, Avaliacao, LojaFavorita
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import JsonResponse
 from produto.models import Produto, Categoria
-from produto.consts import ANIMAL_CHOICES, IDADE_CHOICES, PORTE_CHOICES
+from produto.consts import ANIMAL_CHOICES, PORTE_CHOICES, IDADE_CHOICES
 from django.db.models import Q
 from django.http import FileResponse, Http404
 from django.core.exceptions import ObjectDoesNotExist
-# Import UserPassesTestMixin
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from loja.forms import FormularioLoja
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import AvaliacaoForm, FormularioLoja
-from django.db.models.functions import Radians, Sin, Cos, Sqrt, ATan2
+from .forms import AvaliacaoForm
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
-from django.db.models import Avg
-from agendamento.models import Agendamento
-
 
 
 class ListarLojas(LoginRequiredMixin, ListView):
@@ -34,57 +26,19 @@ class ListarLojas(LoginRequiredMixin, ListView):
     context_object_name = 'lista_lojas'
 
     def get_queryset(self):
-        # Anotar a média de avaliação diretamente na queryset
-        queryset = Loja.objects.annotate(
-            avg_avaliacao=Avg('avaliacoes__nota')
-        )
-
-        # Filtros
+        queryset = super().get_queryset().order_by('nome')
         query = self.request.GET.get('q')
-        favoritas = self.request.GET.get('favoritas')
-
         if query:
             queryset = queryset.filter(Q(nome__icontains=query) | Q(endereco__icontains=query))
-        if favoritas and self.request.user.is_authenticated:
+        
+        favoritas = self.request.GET.get('favoritas')
+        if favoritas:
             queryset = queryset.filter(favoritada_por=self.request.user)
-
-        # Ordenação
-        ordenar_por = self.request.GET.get('ordenar', 'nome')
-        lat = self.request.GET.get('lat')
-        lon = self.request.GET.get('lon')
-
-        if ordenar_por == 'proximidade' and lat and lon:
-            try:
-                user_lat = Radians(float(lat))
-                user_lon = Radians(float(lon))
-
-                # Fórmula de Haversine para calcular distância
-                queryset = queryset.annotate(
-                    dlat=Radians('latitude') - user_lat,
-                    dlon=Radians('longitude') - user_lon
-                ).annotate(
-                    a=Sin('dlat' / 2)**2 + Cos(user_lat) * Cos(Radians('latitude')) * Sin('dlon' / 2)**2
-                ).annotate(
-                    c=2 * ATan2(Sqrt('a'), Sqrt(1 - 'a'))  # Raio da Terra em km
-                ).annotate(
-                    distancia=6371 * 'c'  # Raio da Terra em km
-                ).order_by('distancia')
-            except (ValueError, TypeError):
-                # Se lat/lon forem inválidos, ordena por nome
-                queryset = queryset.order_by('nome')
-        elif ordenar_por == 'avaliacao':
-            queryset = queryset.order_by('-avaliacao_media', 'nome')
-        else: # Padrão é ordenar por nome
-            queryset = queryset.order_by('nome')
-
+        
         return queryset
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        # ADICIONADO: Passa a informação se o usuário é admin
-        context['is_admin'] = self.request.user.is_authenticated and self.request.user.is_superuser
-        
         if self.request.user.is_authenticated:
             context['favoritas_usuario'] = [
                 loja.id for loja in context['lista_lojas']
@@ -94,10 +48,13 @@ class ListarLojas(LoginRequiredMixin, ListView):
             context['favoritas_usuario'] = []
         return context
 
+
+
 class CriarLoja(LoginRequiredMixin, CreateView):
     model = Loja
     form_class = FormularioLoja
     template_name = 'loja/novo.html'
+    success_url = reverse_lazy('loja:loja_list')
 
     def get_form(self, form_class=None):
         """
@@ -118,12 +75,6 @@ class CriarLoja(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['titulo'] = 'Cadastrar Nova Loja'
         return context
-
-    def get_success_url(self):
-        """
-        Redireciona para a página de detalhes da loja recém-criada.
-        """
-        return reverse_lazy('loja:loja_detail', kwargs={'pk': self.object.pk})
 
 class LojaDetailView(LoginRequiredMixin, DetailView):
     """
@@ -163,29 +114,21 @@ class LojaDetailView(LoginRequiredMixin, DetailView):
         # Adiciona os produtos filtrados e as opções de filtro ao contexto
         context['produtos'] = produtos.distinct()
         context['categorias'] = Categoria.objects.all()
-        context['animal_choices'] = ANIMAL_CHOICES # Usado nos filtros
+        context['animal_choices'] = ANIMAL_CHOICES
+        context['porte_choices'] = PORTE_CHOICES
+        context['idade_choices'] = IDADE_CHOICES
 
         context['avaliacoes'] = loja.avaliacoes.select_related('usuario').order_by('-criado_em')
         user = self.request.user
-        
-        # ADICIONADO: Passa a informação se o usuário é admin
-        context['is_admin'] = user.is_authenticated and user.is_superuser
-        
         if user.is_authenticated:
             context['ja_avaliou'] = loja.avaliacoes.filter(usuario=user).exists()
         else:
             context['ja_avaliou'] = False
 
         if user.is_authenticated:
-            context['favoritada'] = loja.favoritada_por.filter(id=user.id).exists()
-            # Adiciona os IDs dos produtos curtidos pelo usuário para esta página
-            produtos_curtidos_ids = user.produtos_curtidos.values_list('id', flat=True)
-            produtos_na_pagina_ids = [p.id for p in context['produtos']]
-            context['curtidos_usuario'] = list(set(produtos_curtidos_ids) & set(produtos_na_pagina_ids))
-            context['is_store_user'] = Loja.objects.filter(email=user.email).exists()
+            context['favoritada'] = LojaFavorita.objects.filter(loja=loja, usuario=user).exists()
         else:
             context['favoritada'] = False
-            context['is_store_user'] = False
 
         return context
     
@@ -221,159 +164,3 @@ def favoritar_loja(request, loja_id):
 
     total_favoritos = loja.favoritada_por.count()
     return JsonResponse({'favoritado': favoritado, 'total_favoritos': total_favoritos})
-
-
-@login_required
-def mapa_lojas_view(request):
-    """
-    View para exibir o mapa com a localização das lojas.
-    Pode receber um `edit_loja_id` para entrar em modo de edição.
-    """
-    context = {}
-    edit_loja_id = request.GET.get('edit_loja_id')
-    if request.user.is_superuser and edit_loja_id:
-        try:
-            loja = Loja.objects.get(pk=edit_loja_id)
-            # Converte o objeto Loja em um dicionário serializável para JSON
-            context['loja_para_editar'] = {
-                'id': loja.id,
-                'nome': loja.nome,
-                'latitude': loja.latitude,
-                'longitude': loja.longitude,
-            }
-        except Loja.DoesNotExist:
-            context['loja_para_editar'] = None
-    return render(request, 'loja/mapa_lojas.html', context)
-
-@login_required
-def perfil_usuario(request):
-    """
-    Exibe a página de perfil do usuário com suas informações e atividades.
-    """
-
-    agendamentos_futuros = Agendamento.objects.filter(
-        usuario=request.user,
-        data_hora__gte=timezone.now() # Não se esqueça de importar timezone
-      ).order_by('data_hora')
-    
-    agendamentos_passados = Agendamento.objects.filter(
-        usuario=request.user,
-        data_hora__lt=timezone.now()
-      ).order_by('-data_hora')
-
-    user = request.user
-    lojas_favoritas = user.lojas_favoritadas.all().order_by('nome')
-    avaliacoes_usuario = Avaliacao.objects.filter(usuario=user).select_related('loja').order_by('-criado_em')
-
-    context = {
-        'lojas_favoritas': lojas_favoritas,
-        'avaliacoes': avaliacoes_usuario,
-        'total_favoritos': lojas_favoritas.count(),
-        'total_avaliacoes': avaliacoes_usuario.count(),
-        'titulo': 'Meu Perfil',
-        'agendamentos_futuros': agendamentos_futuros,
-        'agendamentos_passados': agendamentos_passados,
-    }
-    return render(request, 'loja/perfil_usuario.html', context)
-
-
-# ===================================================
-# NOVAS VIEWS DE ADMIN ADICIONADAS
-# ===================================================
-
-class AdminRequiredMixin(UserPassesTestMixin):
-    """
-    Garante que o usuário logado é um superusuário.
-    """
-    def test_func(self):
-        return self.request.user.is_superuser
-
-class LojaUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
-    """
-    View para um admin editar uma loja existente.
-    """
-    model = Loja
-    form_class = FormularioLoja
-    template_name = 'loja/novo.html' # Reutiliza o template de criação
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['titulo'] = f'Editando Loja: {self.object.nome}'
-        return context
-
-    def get_success_url(self):
-        return reverse_lazy('loja:loja_detail', kwargs={'pk': self.object.pk})
-
-class LojaDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
-    """
-    View para um admin excluir uma loja.
-    """
-    model = Loja
-    template_name = 'loja/loja_confirm_delete.html'
-    success_url = reverse_lazy('loja:loja_list')
-    context_object_name = 'loja'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['titulo'] = f'Excluir Loja: {self.object.nome}'
-        return context
-    
-class AvaliacaoOwnerMixin(LoginRequiredMixin, UserPassesTestMixin):
-    """
-    Mixin para garantir que o usuário logado é o dono da avaliação.
-    Usa o seu model 'Avaliacao'.
-    """
-    model = Avaliacao  # <- Usa o seu model Avaliacao
-    
-    def test_func(self):
-        # Pega o objeto (avaliação) que está sendo acessado
-        avaliacao = self.get_object()
-        # Retorna True se o usuário da requisição for o mesmo usuário que criou a avaliação
-        return self.request.user == avaliacao.usuario
-
-    def handle_no_permission(self):
-        # Redireciona de volta para a loja se o usuário não for o dono
-        loja_pk = self.get_object().loja.pk
-        return redirect('loja:loja_detail', pk=loja_pk)
-
-
-class AvaliacaoUpdateView(AvaliacaoOwnerMixin, UpdateView):
-    """
-    View para o usuário editar sua própria avaliação.
-    """
-    model = Avaliacao
-    fields = ['nota', 'comentario']  # Campos que o usuário pode editar
-    template_name = 'loja/avaliacao_edit.html' # Novo template que vamos criar
-
-    def get_success_url(self):
-        # Redireciona de volta para a página da loja após editar
-        loja_pk = self.object.loja.pk
-        # Usamos 'reverse' aqui
-        return reverse('loja:loja_detail', kwargs={'pk': loja_pk})
-
-    def get_context_data(self, **kwargs):
-        # Adiciona a loja ao contexto para usar no template do formulário
-        context = super().get_context_data(**kwargs)
-        context['loja'] = self.object.loja
-        context['titulo'] = f'Editar Avaliação - {self.object.loja.nome}'
-        return context
-
-
-class AvaliacaoDeleteView(AvaliacaoOwnerMixin, DeleteView):
-    """
-    View para o usuário excluir sua própria avaliação.
-    """
-    model = Avaliacao
-    template_name = 'loja/avaliacao_confirm_delete.html' # Novo template de confirmação
-    
-    def get_success_url(self):
-        # Redireciona de volta para a página da loja após excluir
-        loja_pk = self.object.loja.pk
-        return reverse('loja:loja_detail', kwargs={'pk': loja_pk})
-
-    def get_context_data(self, **kwargs):
-        # Adiciona a loja e o título ao contexto
-        context = super().get_context_data(**kwargs)
-        context['loja'] = self.object.loja
-        context['titulo'] = f'Excluir Avaliação - {self.object.loja.nome}'
-        return context
