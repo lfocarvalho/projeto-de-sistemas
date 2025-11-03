@@ -5,696 +5,289 @@
 
 {% block css_local %}
 <link href="{% static 'css/loja_detail.css' %}" rel="stylesheet">
-<style>
-    /* Melhorias visuais gerais */
-    .loja-header-section {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-        border-radius: 16px;
-        padding: 3rem 2rem;
-        margin-bottom: 3rem;
-        color: white;
-        box-shadow: 0 8px 24px rgba(0, 160, 160, 0.15);
-    }
-
-    .loja-header-section h1 {
-        font-size: 2.8rem;
-        font-weight: 800;
-        margin-bottom: 0.5rem;
-        color: var(--accent-color);
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .loja-header-section .endereco {
-        font-size: 1.1rem;
-        opacity: 0.95;
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .loja-header-section .descricao {
-        font-size: 1rem;
-        line-height: 1.6;
-        opacity: 0.9;
-        margin-bottom: 1.5rem;
-    }
-
-    .loja-actions {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-
-    .btn-favoritar-loja {
-        background-color: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        color: var(--bs-danger);
-        padding: 0;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 1.5rem;
-        /* Aumenta o tamanho do ícone */
-        cursor: pointer;
-    }
-
-    .btn-favoritar-loja:hover {
-        transform: scale(1.1);
-    }
-
-    .btn-favoritar-loja span {
-        display: none;
-        /* Esconde o texto "Favoritar" */
-    }
-
-    .favoritos-count {
-        font-size: 0.9rem;
-        opacity: 0.85;
-    }
-
-    /* Seção de produtos */
-    .produtos-section {
-        margin-bottom: 4rem;
-    }
-
-    .produtos-section h2 {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 2rem;
-        color: var(--primary-color);
-        border-bottom: 3px solid var(--accent-color);
-        padding-bottom: 1rem;
-    }
-
-    .filtros-card {
-        position: sticky;
-        top: 100px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 160, 160, 0.1);
-    }
-
-    .filtros-card .card-header {
-        background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-        color: white;
-        border-radius: 12px 12px 0 0;
-        font-weight: 600;
-    }
-
-    .filtros-card .card-header h5 {
-        color: white;
-    }
-
-    .produto-card {
-        border-radius: 12px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(0, 160, 160, 0.1);
-    }
-
-    .produto-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0, 160, 160, 0.15);
-    }
-
-    .produto-img {
-        height: 200px;
-        object-fit: cover;
-    }
-
-    .produto-card .card-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--primary-color);
-    }
-
-    .produto-card .preco {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: var(--accent-color);
-    }
-
-    /* Seção de avaliações */
-    .avaliacoes-section {
-        margin-top: 4rem;
-        padding: 3rem 2rem;
-        background: linear-gradient(135deg, rgba(0, 160, 160, 0.05) 0%, rgba(0, 255, 179, 0.05) 100%);
-        border-radius: 16px;
-        border: 1px solid rgba(0, 160, 160, 0.1);
-    }
-
-    .avaliacoes-section h2 {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 2rem;
-        color: var(--primary-color);
-        text-align: center;
-    }
-
-    .media-avaliacao {
-        text-align: center;
-        margin-bottom: 2rem;
-        padding: 2rem;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 160, 160, 0.08);
-    }
-
-    .media-avaliacao .stars {
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .media-avaliacao .valor {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--primary-color);
-    }
-
-    .media-avaliacao .total {
-        font-size: 0.95rem;
-        color: #666;
-        margin-top: 0.5rem;
-    }
-
-    .formulario-avaliacao {
-        background: white;
-        padding: 2rem;
-        border-radius: 12px;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 12px rgba(0, 160, 160, 0.08);
-    }
-
-    .formulario-avaliacao h4 {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        margin-bottom: 1.5rem;
-    }
-
-    .avaliacao-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        margin-bottom: 1rem;
-        border-left: 4px solid var(--accent-color);
-        box-shadow: 0 2px 8px rgba(0, 160, 160, 0.08);
-        transition: all 0.3s ease;
-    }
-
-    .avaliacao-card:hover {
-        box-shadow: 0 4px 12px rgba(0, 160, 160, 0.12);
-        transform: translateX(4px);
-    }
-
-    .avaliacao-card .usuario {
-        font-weight: 700;
-        color: var(--primary-color);
-        font-size: 1.05rem;
-    }
-
-    .avaliacao-card .data {
-        font-size: 0.85rem;
-        color: #999;
-    }
-
-    .avaliacao-card .stars {
-        margin: 0.5rem 0;
-        color: #ffc107;
-    }
-
-    .avaliacao-card .comentario {
-        margin-top: 0.75rem;
-        line-height: 1.6;
-        color: #333;
-        font-style: italic;
-    }
-
-    .btn-curtir-produto {
-        background-color: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 0;
-        color: var(--bs-danger);
-        font-size: 1.5rem;
-        line-height: 1;
-        transition: all 0.2s ease;
-        cursor: pointer;
-    }
-
-    .btn-curtir-produto:hover {
-        transform: scale(1.1);
-    }
-
-    .btn-curtir-produto:focus,
-    .btn-curtir-produto:active {
-        outline: none !important;
-        box-shadow: none !important;
-        background-color: transparent !important;
-    }
-
-    .sem-avaliacoes {
-        text-align: center;
-        padding: 2rem;
-        color: #999;
-    }
-
-    .alerta-ja-avaliou {
-        background: linear-gradient(90deg, rgba(0, 160, 160, 0.1) 0%, rgba(0, 255, 179, 0.1) 100%);
-        border-left: 4px solid var(--primary-color);
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-    }
-
-    /* Estilo para os botões de admin */
-    .admin-controls {
-        background: #fff8e1;
-        border: 1px solid #ffe58f;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .admin-controls h5 {
-        color: #664d03;
-        font-weight: 700;
-        margin-bottom: 0.75rem;
-    }
-
-    /* Estilo para botões admin no card de produto */
-    .produto-card .admin-controls {
-        padding: 0.75rem;
-        margin-top: 1rem;
-        margin-bottom: 0;
-        /* Remove margem inferior dentro do card */
-        border-top: 1px solid #ffe58f;
-        background: #fffcf5;
-    }
-
-
-    @media (max-width: 768px) {
-        .loja-header-section {
-            padding: 2rem 1.5rem;
-        }
-
-        .loja-header-section h1 {
-            font-size: 2rem;
-        }
-
-        .loja-actions {
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .btn-favoritar-loja {
-            width: 100%;
-            justify-content: center;
-        }
-
-        .produtos-section h2,
-        .avaliacoes-section h2 {
-            font-size: 1.5rem;
-        }
-    }
-</style>
 {% endblock %}
-
 {% block menu_superior %}
-<section class="menu-section">
-</section>
+    <section class="menu-section">
+    </section>
 {% endblock %}
-
 {% block carrossel %}
 {% endblock%}
-
 {% block conteudo %}
 <div class="container-fluid">
-
-    {% if is_admin %}
-    <div class="admin-controls mt-4">
-        <h5 class="mb-2"><i class="bi bi-shield-lock"></i> Painel do Admin (Loja)</h5>
-        <a href="{% url 'loja:loja_update' pk=loja.pk %}" class="btn btn-warning btn-sm">
-            <i class="bi bi-pencil-square"></i> Editar Loja
-        </a>
-        <a href="{% url 'loja:loja_delete' pk=loja.pk %}" class="btn btn-danger btn-sm">
-            <i class="bi bi-trash"></i> Excluir Loja
-        </a>
-        <a href="{% url 'loja:mapa_view' %}?edit_loja_id={{ loja.id }}" class="btn btn-info btn-sm">
-            <i class="bi bi-map"></i> Editar Localização
-        </a>
-    </div>
+    <!-- Cabeçalho da Loja -->
+    {% if loja.foto %}
+    <div class="loja-header mb-5" style="background-image: url('{{ loja.foto.url }}');">
+    {% else %}
+    <div class="loja-header mb-5 no-image">
     {% endif %}
-    <div class="row g-4 mt-4 mb-4">
-        <div class="col-lg-4">
-            {% if loja.foto %}
-            <img src="{{ MEDIA_URL }}{{ loja.foto }}" class="img-fluid rounded shadow"
-                style="width: 100%; max-height: 300px; object-fit: cover;" alt="{{ loja.nome }}">
-            {% else %}
-            <div class="d-flex align-items-center justify-content-center rounded shadow"
-                style="width: 100%; height: 300px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);">
-                <i class="bi bi-shop" style="font-size: 5rem; color: rgba(255, 255, 255, 0.5);"></i>
-            </div>
-            {% endif %}
-        </div>
-        <div class="col-lg-8">
-            <div class="loja-header-section" style="margin-bottom: 0;">
-                <h1><i class="bi bi-shop"></i> {{ loja.nome }}</h1>
-                <p class="endereco">
-                    <i class="bi bi-geo-alt-fill"></i>
-                    {{ loja.endereco }}
-                </p>
-                <p class="descricao">
-                    {{ loja.descricao|default:"Esta loja ainda não forneceu uma descrição." }}
-                </p>
-
-                {% if user.is_authenticated %}
-                <div class="loja-actions align-items-center" style="height: 2.5rem;">
-                    <button type="button" class="btn-favoritar-loja {% if favoritada %}curtido{% endif %}"
-                        data-loja-id="{{ loja.id }}" data-url="{% url 'loja:favoritar-loja' loja.id %}"
-                        data-csrf="{{ csrf_token }}" data-count-target="favoritos-count-{{ loja.id }}"
-                        title="Favoritar loja">
-                        <i class="bi {% if favoritada %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
-                        <span>{% if favoritada %}Favoritado{% else %}Favoritar{% endif %}</span>
-                    </button>
-                    <span class="favoritos-count" id="favoritos-count-{{ loja.id }}">
-                        <i class="bi bi-heart-fill"></i> <span id="favoritos-count-{{ loja.id }}">{{
-                            loja.favoritada_por.count }}</span> favoritos
-                    </span>
-                </div>
+        <div class="loja-header-content">
+            <h1>{{ loja.nome }}</h1>
+            <p class="lead"><i class="bi bi-geo-alt-fill"></i> {{ loja.endereco }}</p>
+            <div>
+                <span class="badge bg-light text-dark"><i class="bi bi-clock"></i> {{ loja.horario_abertura|time:"H:i" }} - {{ loja.horario_fechamento|time:"H:i" }}</span>
+                {% if loja.atendimento_emergencia %}
+                <span class="badge bg-danger"><i class="bi bi-heart-pulse-fill"></i> Emergência 24h</span>
                 {% endif %}
-
-                {% comment %} O botão de editar localização foi movido para o painel de admin {% endcomment %}
-
             </div>
         </div>
     </div>
 
-    <div class="produtos-section">
-        <h2><i class="bi bi-bag-check"></i> Nossos Produtos</h2>
-
-        <div class="row g-4">
-            <div class="col-lg-3">
-                <div class="card filtros-card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="bi bi-funnel-fill"></i> Filtrar Produtos</h5>
-                    </div>
-                    <div class="card-body">
-                        <form method="get" action="">
-                            <div class="mb-3">
-                                <label for="q" class="form-label"><strong>Nome do Produto</strong></label>
-                                <input type="text" name="q" id="q" class="form-control" value="{{ request.GET.q }}"
-                                    placeholder="Buscar...">
-                            </div>
-                            <div class="mb-3">
-                                <label for="categoria" class="form-label"><strong>Categoria</strong></label>
-                                <select name="categoria" id="categoria" class="form-select">
-                                    <option value="">Todas</option>
-                                    {% for cat in categorias %}
-                                    <option value="{{ cat.id }}" {% if request.GET.categoria == cat.id|stringformat:"s" %}
-                                        selected {% endif %}>
-                                        {{ cat.nome }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="animal" class="form-label"><strong>Animal</strong></label>
-                                <select name="animal" id="animal" class="form-select">
-                                    <option value="">Todos</option>
-                                    {% for val, name in animal_choices %}
-                                    <option value="{{ val }}" {% if request.GET.animal == val %}selected{% endif %}>{{
-                                        name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-custom-primary">
-                                    <i class="bi bi-search"></i> Aplicar Filtros
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-9">
-                <div class="row g-4">
-                    {% for produto in produtos %}
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card h-100 produto-card">
-                            <a href="{% url 'produto:produto_detail' produto.pk %}" class="text-decoration-none">
-                                {% if produto.foto %}
-                                <img src="{{ produto.foto.url }}" class="card-img-top produto-img"
-                                    alt="{{ produto.nome }}">
-                                {% else %}
-                                <div class="card-img-top d-flex align-items-center justify-content-center"
-                                    style="height: 200px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);">
-                                    <i class="bi bi-bag" style="font-size: 3rem; color: rgba(255, 255, 255, 0.5);"></i>
-                                </div>
-                                {% endif %}
-                            </a>
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">{{ produto.nome }}</h5>
-                                <p class="card-text text-muted small">
-                                    <strong>{{ produto.categoria.nome|default:"Sem categoria" }}</strong>
-                                </p>
-
-                                <div class="d-flex align-items-center gap-2 my-2">
-                                    {% for i in "12345" %}
-                                    {% if forloop.counter <= produto.avaliacao_media %} <i
-                                        class="bi bi-star-fill text-warning" style="font-size: 0.85rem;"></i>
-                                        {% elif forloop.counter|add:"-1" < produto.avaliacao_media %} <i
-                                            class="bi bi-star-half text-warning" style="font-size: 0.85rem;"></i>
-                                            {% else %}
-                                            <i class="bi bi-star text-warning" style="font-size: 0.85rem;"></i>
-                                            {% endif %}
-                                            {% endfor %}
-                                            <small class="text-muted">{{ produto.avaliacao_media|floatformat:1
-                                                }}/5</small>
-                                </div>
-
-                                <p class="card-text flex-grow-1 small">{{ produto.descricao|truncatewords:15 }}</p>
-
-                                <div class="mt-auto">
-                                    <p class="preco mb-2">R$ {{ produto.preco|floatformat:2 }}</p>
-                                    <div class="d-flex gap-2">
-                                        <a href="{% url 'produto:produto_detail' produto.pk %}"
-                                            class="btn btn-custom-primary flex-grow-1 btn-sm">
-                                            <i class="bi bi-eye"></i> Ver Detalhes
-                                        </a>
-                                        {% if user.is_authenticated %}
-                                        <button type="button"
-                                            class="btn-curtir-produto {% if produto.id in curtidos_usuario %}curtido{% endif %}"
-                                            data-url="{% url 'produto:curtir' produto.id %}"
-                                            data-csrf="{{ csrf_token }}"
-                                            data-count-target="curtidas-count-{{ produto.id }}" title="Curtir produto">
-                                            <i
-                                                class="bi {% if produto.id in curtidos_usuario %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
-                                        </button>
-                                        {% endif %}
-                                    </div>
-                                </div>
-
-                                {% if is_admin %}
-                                <div class="admin-controls mt-3 pt-3 border-top d-flex gap-2">
-                                    <a href="{% url 'produto:produto_update' pk=produto.pk %}"
-                                        class="btn btn-warning btn-sm w-100">
-                                        <i class="bi bi-pencil-square"></i> Editar Produto
-                                    </a>
-                                    <a href="{% url 'produto:produto_delete' pk=produto.pk %}"
-                                        class="btn btn-danger btn-sm w-100">
-                                        <i class="bi bi-trash"></i> Excluir Produto
-                                    </a>
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="col-12">
-                        <div class="alert alert-info text-center">
-                            <i class="bi bi-info-circle"></i> Nenhum produto encontrado para esta loja ou com os filtros
-                            aplicados.
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
+    <div class="row mb-4">
+        <div class="col-lg-9">
+            <p>{{ loja.descricao|default:"Esta loja ainda não forneceu uma descrição." }}</p>
         </div>
     </div>
 
-    <div class="avaliacoes-section">
-        <h2><i class="bi bi-star"></i> Avaliações da Loja</h2>
+    <div class="row">
 
-        <div class="media-avaliacao">
-            <div class="stars">
-                {% for i in "12345" %}
-                {% if forloop.counter <= loja.avaliacao_media %} <i class="bi bi-star-fill text-warning"></i>
-                    {% elif forloop.counter|add:"-1" < loja.avaliacao_media %} <i class="bi bi-star-half text-warning">
-                        </i>
-                        {% else %}
-                        <i class="bi bi-star text-warning"></i>
-                        {% endif %}
-                        {% endfor %}
-            </div>
-            <div class="valor">{{ loja.avaliacao_media|floatformat:1 }}/5</div>
-            <div class="total">
-                {% with avaliacoes_count=avaliacoes|length %}
-                {{ avaliacoes_count }} avaliação{{ avaliacoes_count|pluralize }}
-                {% endwith %}
-            </div>
-        </div>
-
-        {% if user.is_authenticated %}
-        {% if ja_avaliou %}
-        <div class="alerta-ja-avaliou">
-            <strong><i class="bi bi-check-circle"></i> Obrigado!</strong> Você já avaliou esta loja. Sua avaliação foi
-            registrada com sucesso.
-        </div>
-        {% else %}
-        <div class="formulario-avaliacao">
-            <h4><i class="bi bi-pencil-square"></i> Deixe sua Avaliação</h4>
-            <form method="post" action="{% url 'loja:avaliar-loja' loja.id %}" id="avaliacao-form">
-                {% csrf_token %}
-
-                <div class="mb-3">
-                    <label class="form-label"><strong>Sua Nota</strong></label>
-                    <div class="rating mb-2" style="justify-content: center;">
-                        {% for i in "12345" %}
-                        <input type="radio" id="star-loja-{{ i }}" name="nota"
-                            value="{% widthratio forloop.counter 1 -1 as neg_counter %}{{ 6|add:neg_counter }}"
-                            class="d-none">
-                        <label for="star-loja-{{ i }}" class="star-label"
-                            style="cursor:pointer; font-size:2.5rem; order: {{ i }};">
-                            <i class="bi bi-star-fill"></i>
-                        </label>
-                        {% endfor %}
-                    </div>
+        <!-- Coluna de Filtros -->
+        <div class="col-lg-3">
+<!-- Botão de Favoritar Loja -->
+<div class="mb-3 text-center">
+    {% if user.is_authenticated %}
+   <button class="favoritar-btn" data-loja-id="{{ loja.id }}">
+    {% if loja.id in favoritas_usuario %}
+        <i class="bi bi-heart-fill text-danger fs-4"></i>
+    {% else %}
+        <i class="bi bi-heart text-danger fs-4"></i>
+    {% endif %}
+</button>
+{% endif %}
+<small id="favoritos-count-{{ loja.id }}">{{ loja.favoritada_por.count }} favoritos</small>
+</div>
+<!-- Filtros -->
+            <div class="card filtros-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-funnel-fill"></i> Filtrar Produtos</h5>
                 </div>
-
-                <div class="mb-3">
-                    <label for="comentario" class="form-label"><strong>Comentário (Opcional)</strong></label>
-                    <textarea name="comentario" id="comentario" class="form-control"
-                        placeholder="Compartilhe sua experiência..." rows="3"></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-custom-primary w-100">
-                    <i class="bi bi-send"></i> Enviar Avaliação
-                </button>
-            </form>
-        </div>
-        {% endif %}
-        {% else %}
-        <div class="alert alert-warning text-center">
-            <i class="bi bi-exclamation-triangle"></i>
-            Faça <a href="{% url 'login' %}" class="alert-link"><strong>login</strong></a> para avaliar esta loja.
-        </div>
-        {% endif %}
-
-        <div class="mt-4">
-            <h4 style="font-size: 1.3rem; font-weight: 700; color: var(--primary-color); margin-bottom: 1.5rem;">
-                <i class="bi bi-chat-dots"></i> Avaliações de Clientes
-            </h4>
-
-            {% if avaliacoes %}
-            {% for avaliacao in avaliacoes %}
-            <div class="avaliacao-card">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                        <span class="usuario">@{{ avaliacao.usuario.username }}</span>
-                        <div class="stars">
-                            {% for i in "12345" %}
-                            {% if forloop.counter <= avaliacao.nota %} <i class="bi bi-star-fill"></i>
-                                {% else %}
-                                <i class="bi bi-star"></i>
-                                {% endif %}
+                <div class="card-body">
+                    <form method="get" action="">
+                        <div class="mb-3">
+                            <label for="q" class="form-label">Nome do Produto</label>
+                            <input type="text" name="q" id="q" class="form-control" value="{{ request.GET.q }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoria" class="form-label">Categoria</label>
+                            <select name="categoria" id="categoria" class="form-select">
+                                <option value="">Todas</option>
+                                {% for cat in categorias %}
+                                <option value="{{ cat.id }}" {% if request.GET.categoria == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.nome }}</option>
                                 {% endfor %}
+                            </select>
                         </div>
-                    </div>
-                    <span class="data">{{ avaliacao.criado_em|date:"d/m/Y H:i" }}</span>
-                </div>
-                {% if avaliacao.comentario %}
-                <p class="comentario">{{ avaliacao.comentario }}</p>
-                {% endif %}
-                {% comment %} ...dentro do seu loop for avaliacao... {% endcomment %}
-                {% if user == avaliacao.usuario %}
-                <div class="mt-3 pt-3 border-top d-flex gap-2">
-                    <button type="button" class="btn btn-warning btn-sm btn-edit-avaliacao" data-bs-toggle="modal"
-                        data-bs-target="#modalEditarAvaliacao"
-                        data-form-action="{% url 'loja:avaliacao_update' avaliacao.id %}"
-                        data-nota="{{ avaliacao.nota }}" data-comentario="{{ avaliacao.comentario }}">
-                        <i class="bi bi-pencil-square"></i> Editar
-                    </button>
-
-                    <form method="post" action="{% url 'loja:avaliacao_delete' avaliacao.id %}"
-                        onsubmit="return confirm('Tem certeza que deseja excluir esta avaliação?');" class="mb-0">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash"></i> Excluir
-                        </button>
+                        <div class="mb-3">
+                            <label for="animal" class="form-label">Animal</label>
+                            <select name="animal" id="animal" class="form-select">
+                                <option value="">Todos</option>
+                                {% for val, name in animal_choices %}
+                                <option value="{{ val }}" {% if request.GET.animal == val %}selected{% endif %}>{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-custom-primary">Aplicar Filtros</button>
+                        </div>
                     </form>
                 </div>
-                {% endif %}
             </div>
-            {% endfor %}
-            {% else %}
-            <div class="sem-avaliacoes">
-                <i class="bi bi-chat-left-text" style="font-size: 2rem; color: #ccc;"></i>
-                <p style="margin-top: 1rem;">Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>
-            </div>
-            {% endif %}
         </div>
-    </div>
-</div>
-<div class="modal fade" id="modalEditarAvaliacao" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form method="post" id="edit-avaliacao-form">
-                {% csrf_token %}
-                <div class="modal-header bg-warning text-dark">
-                    <h5 class="modal-title" id="modalEditarLabel"><i class="bi bi-pencil-square"></i> Editar Avaliação
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Sua Nota</strong></label>
-                        <div class="rating-modal mb-2" style="justify-content: center;">
-                            {% for i in "12345" %}
-                            <input type="radio" id="star-modal-{{ i }}" name="nota"
-                                value="{% widthratio forloop.counter 1 -1 as neg_counter %}{{ 6|add:neg_counter }}"
-                                class="d-none">
-                            <label for="star-modal-{{ i }}" class="star-label-modal"
-                                style="cursor:pointer; font-size:2.5rem; order: {{ i }};">
-                                <i class="bi bi-star-fill"></i>
-                            </label>
-                            {% endfor %}
+
+        <!-- Coluna de Produtos -->
+        <div class="col-lg-9">
+            <div class="row">
+                {% for produto in produtos %}
+                <div class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+                    <div class="card h-100 produto-card shadow-sm w-100">
+                        {% if produto.foto %}
+                            <img src="{{ produto.foto.url }}" class="card-img-top produto-img" alt="{{ produto.nome }}">
+                        {% else %}
+                            <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #2a2a2a;">
+                                <i class="bi bi-bag" style="font-size: 3rem; color: #ced4da;"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ produto.nome }}</h5>
+                            <p class="card-text text-muted small">{{ produto.categoria.nome|default:"Sem categoria" }}</p>
+                            <p class="card-text flex-grow-1">{{ produto.descricao|truncatewords:15 }}</p>
+                            <div class="mt-auto">
+                                <p class="preco mb-2">R$ {{ produto.preco|floatformat:2 }}</p>
+                                <a href="{% url 'produto:produto_detail' produto.pk %}" class="btn btn-custom-primary w-100">Ver Detalhes</a>
+                            </div>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="edit-comentario" class="form-label"><strong>Comentário</strong></label>
-                        <textarea name="comentario" id="edit-comentario" class="form-control" rows="3"></textarea>
+                </div>
+                {% empty %}
+                <div class="col">
+                    <div class="alert alert-info">
+                        Nenhum produto encontrado para esta loja ou com os filtros aplicados.
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-lg"></i> Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-check-lg"></i> Salvar Alterações
-                    </button>
-                </div>
-            </form>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
+ <!-- ⭐ Avaliação média e formulário -->
+<div class="mt-4 text-center">
+    <!-- Média atual -->
+    <div class="mb-2">
+        {% for i in "12345" %}
+            {% if forloop.counter <= loja.avaliacao_media %}
+                <i class="bi bi-star-fill text-warning"></i>
+            {% elif forloop.counter|add:"-1" < loja.avaliacao_media %}
+                <i class="bi bi-star-half text-warning"></i>
+            {% else %}
+                <i class="bi bi-star text-warning"></i>
+            {% endif %}
+        {% endfor %}
+        <small class="text-muted ms-2">{{ loja.avaliacao_media|floatformat:1 }}/5</small>
+    </div>
 
-{% endblock %}
+    <!-- Formulário para avaliar -->
+{% if user.is_authenticated %}
+    {% if ja_avaliou %}
+        <div class="alert alert-info text-center">
+            Você já avaliou esta loja. Obrigado pelo seu feedback! ⭐
+        </div>
+    {% else %}
+        <form method="post" action="{% url 'loja:avaliar-loja' loja.id %}" id="avaliacao-form">
+            {% csrf_token %}
 
-{% block javascript_local %}
-<script src="{% static 'js/avaliacao.js' %}"></script>
+            <!-- Estrelas -->
+            <div class="rating mb-2">
+                {% for i in "54321" %}
+                    <input type="radio" id="star{{ i }}" name="nota" value="{{ i }}" class="d-none">
+                    <label for="star{{ i }}" class="star-label" style="cursor:pointer; font-size:2rem; color:#ccc;">
+                        <i class="bi bi-star-fill"></i>
+                    </label>
+                {% endfor %}
+            </div>
+
+            <!-- Caixa de comentário -->
+            <div class="mb-2">
+                <textarea name="comentario" class="form-control" placeholder="Deixe um comentário (opcional)" rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-custom-primary btn-sm">Enviar Avaliação</button>
+        </form>
+    {% endif %}
+{% else %}
+    <div class="alert alert-warning">
+        Faça <a href="{% url 'login' %}">login</a> para avaliar esta loja.
+    </div>
+{% endif %}
+
+
+<!-- ⭐ Avaliações dos usuários -->
+<div class="mt-5">
+    <h4 class="mb-3 text-center">Avaliações de Clientes</h4>
+    {% if avaliacoes %}
+        {% for avaliacao in avaliacoes %}
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h6 class="mb-1">
+                        <strong>{{ avaliacao.usuario.username }}</strong>
+                    </h6>
+                    <small class="text-muted">{{ avaliacao.criado_em|date:"d/m/Y H:i" }}</small>
+                </div>
+                <div class="mb-1">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= avaliacao.nota %}
+                            <i class="bi bi-star-fill text-warning"></i>
+                        {% else %}
+                            <i class="bi bi-star text-warning"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% if avaliacao.comentario %}
+                    <p class="mb-0">{{ avaliacao.comentario }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-secondary text-center">
+            Nenhuma avaliação ainda. Seja o primeiro a avaliar!
+        </div>
+    {% endif %}
+</div>
+<script>
+const estrelas = document.querySelectorAll('.rating label');
+const inputs = document.querySelectorAll('.rating input');
+
+estrelas.forEach((label, idx) => {
+    label.addEventListener('click', () => {
+        // Marca o input correspondente
+        const input = document.getElementById(label.htmlFor);
+        input.checked = true;
+
+        // Atualiza visual das estrelas
+        atualizarEstrelas();
+    });
+
+    label.addEventListener('mouseover', () => {
+        atualizarEstrelas(idx);
+    });
+
+    label.addEventListener('mouseout', () => {
+        atualizarEstrelas(); // volta para o estado marcado
+    });
+});
+
+function atualizarEstrelas(hoverIdx = null) {
+    const checkedIdx = Array.from(inputs).findIndex(i => i.checked);
+
+    estrelas.forEach((label, idx) => {
+        const iElem = label.querySelector('i');
+        let fill = false;
+
+        if (hoverIdx !== null) {
+            fill = idx >= hoverIdx; // RTL: idx maior ou igual ao hover
+        } else if (checkedIdx !== -1) {
+            fill = idx >= checkedIdx; // RTL: idx maior ou igual ao selecionado
+        }
+
+        iElem.style.color = fill ? 'gold' : '#ccc';
+    });
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.favoritar-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const lojaId = this.dataset.lojaId;
+
+            const response = await fetch("{% url 'loja:favoritar-loja' 0 %}".replace('0', lojaId), {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Accept': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                console.error('Erro ao favoritar a loja');
+                return;
+            }
+
+            const data = await response.json();
+
+            const icon = this.querySelector('i');
+            const countEl = document.getElementById('favoritos-count-' + lojaId);
+
+            if (data.favoritado) {
+                icon.classList.remove('bi-heart');
+                icon.classList.add('bi-heart-fill');
+            } else {
+                icon.classList.remove('bi-heart-fill');
+                icon.classList.add('bi-heart');
+            }
+
+            countEl.textContent = `${data.total_favoritos} favoritos`;
+        });
+    });
+});
+</script>
+
 {% endblock %}

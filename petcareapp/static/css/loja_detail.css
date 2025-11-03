@@ -89,8 +89,8 @@
     }
 }
 .rating {
+    direction: rtl; /* inverte a ordem para clique intuitivo (5 à esquerda) */
     display: inline-flex;
-    flex-direction: row-reverse; /* Mantém o comportamento de preenchimento da direita para a esquerda no hover */
     justify-content: center;
 }
 
