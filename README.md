@@ -63,6 +63,14 @@ Este projeto foi desenvolvido como parte da disciplina de Projeto de Sistemas da
    ```bash
    pip install django-bootstrap-v5
    ```
+   Com o ambiente virtual ativo, instale o Allauth.
+   ```bash
+   pip install django-allauth
+   pip install --upgrade PyJWTD
+   pip install django-environ
+   pip install jwt
+   pip install requests
+   ```
 
 5.  **Configure o banco de dados:**
     Aplique as migrações para criar as tabelas necessárias no banco de dados.
