@@ -9,7 +9,7 @@ Este projeto foi desenvolvido como parte da disciplina de Projeto de Sistemas da
 
 
 ### Links Rápidos
-
+- [Vídeo Pitch – Liga Jovem](https://youtu.be/bO_F5-_RH-0?si=_H23I241z7CZnpjX)  
 
 ## Funcionalidades Implementadas
 
@@ -23,7 +23,7 @@ Este projeto foi desenvolvido como parte da disciplina de Projeto de Sistemas da
     * Registrar sua loja, permitindo que usuários a encontrem e suas informações (endereço, atendimento 24h, etc.).
     * Criação, edição e exclusão de produtos.
     * Visualização de consultas e serviços agendados em um dashboard interativo.
-    * Visualisar avaliação de usuários à loja e produtos
+    * Visualizar avaliação de usuários à loja e produtos
 
 * **Dashboard Interativo:**
     * Pesquisar e filtrar lojas.
@@ -33,13 +33,53 @@ Este projeto foi desenvolvido como parte da disciplina de Projeto de Sistemas da
     * Painel de administrador para visualização de todos as lojas e produtos cadastrados no sistema, com possibilidade de alterar e deletar, além de criar novas categorias de produtos.
 
 
+## Como Instalar e Executar o Projeto
+
+1.  **Pré-requisitos:**
+    * Python 3.10 ou superior.
+    * Git.
+
+2.  **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/lfocarvalho/projeto-de-sistemas.git](https://github.com/lfocarvalho/projeto-de-sistemas.git)
+    cd projeto-de-sistemas
+    ```
+
+3.  **Crie e ative o seu ambiente virtual :**
+   Recomenda-se o uso de um ambiente virtual para gerenciar as dependências do projeto.
+   * No Windows:
+   ```bash
+   python -m venv venv
+   .\venv\Scripts\activate
+   ````
+   * No Linux/macOS:
+```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+4.  **Configure o banco de dados:**
+    Aplique as migrações para criar as tabelas necessárias no banco de dados.
+   ```bash
+   python manage.py migrate
+   ```
+
+5.  **Execute o servidor:**
+   ```bash
+   python manage.py runserver
+   ```
+
+6.  **Acesse a aplicação:**
+   Abra o seu navegador e acesse o endereço indicado no terminal (geralmente a porta 8000):
+  * URL: `http://127.0.0.1:8000/`
+
 ---
 
 
 ## Informações Acadêmicas
 
 * **Universidade:** Universidade Federal do Tocantins
-* **Curso:** Ciências da Computação
+* **Curso:** Ciência da Computação
 * **Disciplina:** Projeto de Sistemas - 2025.2
 * **Professor:** Edeilson Milhomem da Silva
 
@@ -47,10 +87,10 @@ Este projeto foi desenvolvido como parte da disciplina de Projeto de Sistemas da
 
 | Nome                              | Github                                           |
 | --------------------------------- | ------------------------------------------------ |
-| Isabela Barros de Oliveira.       | [@Isabelabarros-o](https://github.com/isabelabarros-o) |
-| Luiz Fernando De Oliveira Carvalho. | [@Lfocarvalho](https://github.com/lfocarvalho) |
-| Mateus Leopoldo Santiago da Silva. | [@MateusLeopoldo](https://github.com/MateusLeopoldo) |
-| Natália Morais Nerys.             | [@natalia-nerys](https://github.com/natalia-nerys)     |
-| Ranor Victor dos Santos Araújo.   | [@ranorvictor](https://github.com/ranorvictor)     |
+| Isabela Barros de Oliveira       | [@isabelabarros-o](https://github.com/isabelabarros-o) |
+| Luiz Fernando De Oliveira Carvalho | [@Lfocarvalho](https://github.com/lfocarvalho) |
+| Mateus Leopoldo Santiago da Silva | [@MateusLeopoldo](https://github.com/MateusLeopoldo) |
+| Natália Morais Nerys             | [@natalia-nerys](https://github.com/natalia-nerys)     |
+| Ranor Victor dos Santos Araújo   | [@ranorvictor](https://github.com/ranorvictor)     |
 
 [Link para o repositório do projeto](https://github.com/lfocarvalho/projeto-de-sistemas)
