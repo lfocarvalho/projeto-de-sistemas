@@ -58,18 +58,24 @@ Este projeto foi desenvolvido como parte da disciplina de Projeto de Sistemas da
    source venv/bin/activate
    ```
 
-4.  **Configure o banco de dados:**
+4.  **Instale as dependências:**
+    Com o ambiente virtual ativo, instale o Bootstrap.
+   ```bash
+   pip install django-bootstrap-v5
+   ```
+
+5.  **Configure o banco de dados:**
     Aplique as migrações para criar as tabelas necessárias no banco de dados.
    ```bash
    python manage.py migrate
    ```
 
-5.  **Execute o servidor:**
+6.  **Execute o servidor:**
    ```bash
    python manage.py runserver
    ```
 
-6.  **Acesse a aplicação:**
+7.  **Acesse a aplicação:**
    Abra o seu navegador e acesse o endereço indicado no terminal (geralmente a porta 8000):
   * URL: `http://127.0.0.1:8000/`
 
@@ -88,7 +94,7 @@ Este projeto foi desenvolvido como parte da disciplina de Projeto de Sistemas da
 | Nome                              | Github                                           |
 | --------------------------------- | ------------------------------------------------ |
 | Isabela Barros de Oliveira       | [@isabelabarros-o](https://github.com/isabelabarros-o) |
-| Luiz Fernando De Oliveira Carvalho | [@Lfocarvalho](https://github.com/lfocarvalho) |
+| Luiz Fernando de Oliveira Carvalho | [@Lfocarvalho](https://github.com/lfocarvalho) |
 | Mateus Leopoldo Santiago da Silva | [@MateusLeopoldo](https://github.com/MateusLeopoldo) |
 | Natália Morais Nerys             | [@natalia-nerys](https://github.com/natalia-nerys)     |
 | Ranor Victor dos Santos Araújo   | [@ranorvictor](https://github.com/ranorvictor)     |
