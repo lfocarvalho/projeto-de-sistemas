@@ -59,11 +59,10 @@ Este projeto foi desenvolvido como parte da disciplina de Projeto de Sistemas da
    ```
 
 4.  **Instale as dependências:**
-    Com o ambiente virtual ativo, instale o Bootstrap.
+    Com o ambiente virtual ativo, instale o Bootstrap e Allauth.
    ```bash
    pip install django-bootstrap-v5
    ```
-   Com o ambiente virtual ativo, instale o Allauth.
    ```bash
    pip install django-allauth
    pip install --upgrade PyJWTD
