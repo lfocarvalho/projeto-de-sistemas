@@ -21,6 +21,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.db.models import Avg
 from agendamento.models import Agendamento
+from datetime import datetime
+from django.utils import timezone
 
 
 
