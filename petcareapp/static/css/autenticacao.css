@@ -1,4 +1,4 @@
-#paw-background-container {
+.login-page #paw-background-container {
     position: fixed; /* Fixa o fundo na tela */
     top: 0;
     left: 0;
@@ -9,7 +9,6 @@
     z-index: -1; /* Coloca o fundo atrás de todo o conteúdo */
     opacity: 0.1; /* Ajuste a opacidade geral do fundo se quiser as patas mais sutis */
 }
-
 .paw-stamp {
     position: absolute;
     background-size: contain;
@@ -29,7 +28,9 @@
 }
 
 /* === FUNDO E TIPOGRAFIA === */
-body {
+
+/* Apply heavy decorative background only for auth pages to avoid blocking scroll */
+.login-page {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
     color: var(--text-color);
@@ -39,7 +40,7 @@ body {
     background-attachment: fixed;
     background-color: var(--bg-main); /* Cor de fundo sólida */
     position: relative;
-    overflow: hidden; /* Evita que elementos vazem */
+    /* keep page scrollable for other pages */
 }
 
 /* Gradiente e estampa de fundo */

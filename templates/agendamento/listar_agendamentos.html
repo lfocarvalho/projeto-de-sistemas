@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Meus Agendamentos{{ block.super }}{% endblock %}
+
+{% block conteudo %}
+<div class="container-fluid">
+    
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Meus Agendamentos</h1>
+            <hr>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3 class="mb-3">Próximos Agendamentos</h3>
+            
+            {% if agendamentos_futuros %}
+                <div class="list-group shadow-sm">
+                    {% for agendamento in agendamentos_futuros %}
+                        <div class="list-group-item list-group-item-action flex-column align-items-start mb-2">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">
+                                    <a href="{% url 'loja:loja_detail' agendamento.loja.pk %}" class="text-decoration-none">{{ agendamento.loja.nome }}</a>
+                                </h5>
+                                <small>{{ agendamento.data_hora|date:"d/m/Y \à\s H:i" }}</small>
+                            </div>
+                            <p class="mb-1">
+                                <strong>Serviço:</strong> {{ agendamento.produto.nome|default:"Agendamento Geral" }}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Observações: {{ agendamento.observacoes|default:"Nenhuma"|truncatewords:10 }}</small>
+                                <span class="badge bg-primary rounded-pill">{{ agendamento.get_status_display }}</span>
+                            </div>
+                            </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                    Você não possui agendamentos futuros.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-3">Agendamentos Passados</h3>
+            {% if agendamentos_passados %}
+                <div class="list-group shadow-sm">
+                    {% for agendamento in agendamentos_passados %}
+                        <div class="list-group-item list-group-item-action flex-column align-items-start mb-2">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">
+                                    <a href="{% url 'loja:loja_detail' agendamento.loja.pk %}" class="text-decoration-none">{{ agendamento.loja.nome }}</a>
+                                </h5>
+                                <small>{{ agendamento.data_hora|date:"d/m/Y \à\s H:i" }}</small>
+                            </div>
+                            <p class="mb-1">
+                                <strong>Serviço:</strong> {{ agendamento.produto.nome|default:"Agendamento Geral" }}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Observações: {{ agendamento.observacoes|default:"Nenhuma"|truncatewords:10 }}</small>
+                                <span class="badge bg-primary rounded-pill">{{ agendamento.get_status_display }}</span>
+                            </div>
+                        </div> {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                    Você não possui agendamentos passados.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
