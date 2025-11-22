@@ -1,4 +1,4 @@
-![Logo da Minha Empresa](https://github.com/lfocarvalho/projeto-de-sistemas/blob/78bd463e99c560456f805b5cf2f042411bd8affa/media/loja/fotos/Captura_de_tela_de_2025-09-20_17-30-53.png)
+![Logo da Minha Empresa](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/media/projeto_fotos/petcare%20logo.jpg)
 # PetCare
 
 O PetCare é um projeto que visa conectar tutores e o mercado pet, promovendo a acessibilidade à saúde do seu animal. Nesse aplicativo você encontra petshops e veterinários perto de você, com detalhes de fácil acesso, além de informações sobre campanhas de vacinação e tudo de relevante para a saúde do seu pet.
@@ -6,7 +6,23 @@ O PetCare é um projeto que visa conectar tutores e o mercado pet, promovendo a 
 Este projeto foi desenvolvido como parte da disciplina de Projeto de Sistemas da Universidade Federal do Tocantins.
 
 ### Imagens do Projeto
+![Tela de Login](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/media/projeto_fotos/tela_login.png)
 
+![tela lojas](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/media/projeto_fotos/tela_lojas.png)
+
+![Tela de Produtos](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/media/projeto_fotos/tela_produtos.png)
+
+![Tela de Localizações](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/media/projeto_fotos/tela_localizacoes.png)
+
+![Tela de Agendamentos](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/media/projeto_fotos/tela_agendamentos.png)
+
+![Detalhes da Loja](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/media/projeto_fotos/loja_detalhes.png)
+
+![Detalhes do Produto](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/media/projeto_fotos/produto_detalhes.png)
+
+![Avaliações](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/media/projeto_fotos/avaliacao_loja.png)
+
+![Perfil do Usuáro](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/media/projeto_fotos/tela_perfil_cliente.png)
 
 ### Links Rápidos
 - [Vídeo Pitch – Liga Jovem](https://youtu.be/bO_F5-_RH-0?si=_H23I241z7CZnpjX)  
