@@ -25,7 +25,8 @@ Este projeto foi desenvolvido como parte da disciplina de Projeto de Sistemas da
 ![Perfil do Usuáro](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/media/projeto_fotos/tela_perfil_cliente.png)
 
 ### Links Rápidos
-- [Vídeo Pitch – Liga Jovem](https://youtu.be/bO_F5-_RH-0?si=_H23I241z7CZnpjX)  
+- [Vídeo Pitch – Liga Jovem](https://youtu.be/bO_F5-_RH-0?si=_H23I241z7CZnpjX)
+- [Landing Page](https://petcarepage.netlify.app/)
 
 ## Funcionalidades Implementadas
 
