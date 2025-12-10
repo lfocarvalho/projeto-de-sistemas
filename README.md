@@ -28,7 +28,7 @@ Este projeto foi desenvolvido como parte da disciplina de Projeto de Sistemas da
 - [Vídeo Pitch – Liga Jovem](https://youtu.be/bO_F5-_RH-0?si=_H23I241z7CZnpjX)
 - [Landing Page](https://petcarepage.netlify.app/)
 - [Slide do Pitch](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/Co%CC%81pia%20de%20PetCare.pdf)
-- [planejamento das Apresentações](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/media/projeto_repositorio/Apresenta%C3%A7%C3%B5es.txt)
+- [Planejamento das Apresentações](https://github.com/lfocarvalho/projeto-de-sistemas/blob/main/media/projeto_repositorio/Apresenta%C3%A7%C3%B5es.txt)
 
 ## Funcionalidades Implementadas
 
