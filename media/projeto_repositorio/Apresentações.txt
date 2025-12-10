@@ -1,4 +1,3 @@
-# Gerando o arquivo de texto com codificação UTF-8 para preservar acentuação
 content = """Roteiro de Apresentação – PetCare
 
 Entregáveis Essenciais
