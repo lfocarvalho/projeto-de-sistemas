@@ -1,0 +1,109 @@
+# Gerando o arquivo de texto com codificação UTF-8 para preservar acentuação
+content = """Roteiro de Apresentação – PetCare
+
+Entregáveis Essenciais
+1. Repositório geral da disciplina: OK
+2. Landing page: OK
+3. APK (Aplicativo): OK
+4. Vídeo comercial: OK
+
+---
+
+Parte 1: Apresentação Comercial
+
+1. Contextualização, Motivação e Visão Geral
+(Destaque da Proposta de Valor, dor do cliente e solução)
+
+Roteiro do Apresentador:
+"Boa tarde a todos. Antes de falarmos sobre tecnologia, software ou mercado, eu quero falar sobre família. Para muitos de nós, o pet não é apenas um animal de estimação. Ele é um filho. E como qualquer membro da família, quando eles sofrem, nós sofremos junto.
+
+Mas imaginem o desespero de ter esse membro da família em risco de vida. Como assim, Mateus? Bem... Este é o Chico! Um gatinho alegre e cheio de energia que, por um infortúnio, acabou lidando com uma contaminação cruzada grave.
+
+Agora imaginem a cena: domingo, fim do dia, o animal em risco de vida, e seu dono precisava urgentemente de um veterinário 24 horas. Recorreu ao Google, ao Instagram... e o que encontrou? Falta de informação. Não sabia quem estava aberto, quem tinha a especialidade certa e, principalmente, onde conseguiria pagar, já que seu orçamento era limitado naquele momento.
+
+Essa não é uma hipótese. É a realidade de uma dor latente. Uma situação de extremo risco como essa não é apenas algo teórico, é uma realidade palpável de uma história real, do MEU gato, Chico.
+
+Foi dessa dor que nasceu o PetCare. Nós entendemos que, na hora da emergência (ou mesmo na rotina de compra de ração), o tutor precisa de três coisas: Localização rápida, Comparação de preços e Transparência. O PetCare não é apenas uma lista telefônica; é uma solução orquestrada para conectar a necessidade do tutor com a oferta das lojas e clínicas."
+
+2. Demonstração Prática (Como funciona)
+
+- Listagem de Lojas e Serviços/Produtos: Visualização geral.
+- Comparador de Preços: "Vejam aqui. Ao buscar por um produto, como uma areia ou ração específica, o PetCare mostra onde ela está mais barata. Aqui, por exemplo, encontramos uma diferença de quase 50% no mesmo produto entre lojas diferentes."
+- Geolocalização: "O usuário vê imediatamente no mapa as lojas e clínicas abertas próximas a ele. Acabou a busca cega."
+- Transparência e Agendamento: "Além de encontrar o produto, eu consigo ver avaliações reais de outros tutores e agendar serviços como banho e tosa diretamente pelo aplicativo, sem precisar ligar de lugar em lugar."
+
+3. Modelo de Negócio (Sustentabilidade)
+"Mas a pergunta essencial é: como o PetCare se sustenta? Nossa estratégia de monetização se baseia em três pilares:
+
+1. Publicidade: Banners e propagandas direcionadas dentro do app.
+2. Destaque Patrocinado: Lojas parceiras podem pagar para aparecer no topo das recomendações de busca.
+3. Retenção e Fidelização: E aqui está o nosso diferencial estratégico. Ao invés de o usuário achar a loja e nunca mais voltar ao app, nosso comparador de preços torna o PetCare uma ferramenta de uso contínuo. Nós criamos o hábito de consultar o app antes de qualquer compra, garantindo que o usuário permaneça no nosso ecossistema."
+
+4. Encerramento
+"O PetCare nasceu para garantir que situações como a do Chico tenham um final feliz, sem surpresas logísticas ou financeiras. Essa solução foi desenvolvida por mim, Mateus, junto com a Isabela, o Luiz, a Natália e o Ranor.
+Nós somos o PetCare: o companheiro essencial para a vida inteira do seu pet. Muito obrigado pela atenção!"
+
+---
+
+Parte 2: Apresentação Técnica
+
+1. Objetivo
+A apresentação técnica tem como objetivo demonstrar as questões técnicas do projeto, tecnologias, arquitetura, processo de desenvolvimento, a relação com o "The Twelve-Factor App" (pelo menos 6 itens) e a visão geral sobre a experiência vivenciada.
+
+2. Produto e Desenvolvimento
+- Ideia: A ideia surgiu da dificuldade real vivida por um integrante (gato envenenado, dificuldade de achar veterinário fora do horário comercial). Evoluímos de um site de informações para uma plataforma completa.
+- Tecnologias:
+  - Linguagem: Python.
+  - Framework: Django.
+  - Frontend: Bootstrap.
+
+3. The Twelve-Factor App
+(Evidenciar na apresentação as partes do projeto que contemplam os fatores selecionados pelo time).
+
+4. Equipe de Desenvolvimento
+- Integrantes: Isabela Barros de Oliveira, Luiz Fernando de Oliveira Carvalho, Mateus Leopoldo Santiago da Silva, Natália Morais Nerys e Ranor Victor dos Santos Araújo.
+- Divisão de tarefas: Comunicação direta e updates contínuos sobre o status das atividades.
+- Pontos Positivos: Divisão torna o trabalho mais leve, variedade de ideias para solucionar problemas, companheirismo.
+- Pontos Negativos/Desafios: Alinhamento de prioridades na organização e falhas pontuais na comunicação.
+
+5. Aprendizagem Baseada em Projetos (Metodologia)
+- Processo Ágil: Trouxe senso de urgência e necessidade de reinvenção a cada iteração para evoluir o projeto.
+- Autogerenciamento: A liberdade permitiu que a equipe definisse suas prioridades, aumentando a responsabilidade individual.
+- Feedback: A comunicação interna e as avaliações quinzenais (pares/professor) nortearam as correções de erros a cada iteração.
+
+6. Sugestões e Lições Aprendidas
+- Sugestão: Disponibilizar o arquivo "Aspectos importantes para a Avaliação do Projeto" logo no início do semestre para melhor direcionamento.
+- Pontos Positivos da Disciplina: Aplicação prática do conhecimento, convívio social/trabalho em grupo, feedback frequente do professor, liberdade criativa.
+- Pontos Negativos: Faltaram detalhes nas orientações dos feedbacks em algumas entregas.
+
+---
+
+Parte 3: Critérios e Elementos Adicionais
+(Respostas aos critérios de avaliação)
+
+1. Critérios sobre o Produto
+- MVP: Sim, o projeto é mais que uma versão mínima; possui funcionalidades robustas implantadas.
+- Requisitos: Validados com lojas (perguntamos funcionalidades prioritárias) e usuários (sugestões de melhoria).
+- Funcionalidades Essenciais: Cadastro de lojas e produtos implementados com sucesso nas primeiras iterações.
+- Valor do Produto: Facilmente perceptível (soluciona problema social/emergencial). Validado no "Desafio Liga Jovem".
+- Inovação/Concorrência: Análise criteriosa realizada. Não encontramos modelo idêntico no mercado que atenda este público específico da mesma forma.
+- Escalabilidade: Sim. Quanto maior a base de lojas, mais atrativo para usuários (efeito de rede).
+- Feedback: Testado por usuários (foco em acessibilidade e design).
+- Métricas de Sucesso: Número de vendas, acessos às lojas, favoritos e comentários.
+- Iteração: Feedbacks do professor e usuários testes foram implementados rapidamente nas iterações subsequentes.
+
+2. Critérios Técnicos Fundamentais
+- Processo de Trabalho: Ciclo de vida claro, iterações de 4 sprints planejadas e divididas.
+- Gerenciamento/Colaboração: Evidenciado pelo histórico do GitHub e comunicação direta.
+- Arquitetura: Padrão MVT (Model, View, Template) do Django.
+- Usabilidade (UX/UI): Design simples, acessível, focado na menor quantidade de cliques ("Don't make me think").
+- Testabilidade: Uso de testes unitários e validação com usuário.
+- Manutenibilidade: Código organizado, princípio DRY (Don't Repeat Yourself), código limpo e comentado.
+- The Twelve-Factor App: Aplicação clara dos fatores selecionados na metodologia.
+"""
+
+file_path = '/mnt/data/Roteiro_Apresentacao_PetCare.txt'
+with open(file_path, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+file_path
